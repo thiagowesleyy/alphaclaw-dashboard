@@ -5,701 +5,579 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AlphaClaw v3 — Dashboard</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: #1a2e42 #010913; }
-  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #1a2e42; border-radius: 2px; }
-  body { background: #010913; color: #B8CCD8; font-family: 'Courier New', monospace; font-size: 12px; overflow-x: hidden; }
-  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-  .spinner { display: inline-block; animation: spin 1s linear infinite; }
-  .fade { animation: fadeIn 0.3s ease; }
-  .dot { width:6px; height:6px; border-radius:50%; animation: pulse 2s infinite; display:inline-block; }
-  .tag { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:700; letter-spacing:0.5px; font-family:monospace; }
-  button { cursor:pointer; font-family:monospace; border:none; outline:none; }
-  button:hover { opacity:0.8; }
-
-  /* LAYOUT */
-  #header { background: linear-gradient(90deg,#010913,#031528,#010913); border-bottom:1px solid #0a1f35; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
-  #ticker-wrap { overflow:hidden; border-bottom:1px solid #071422; height:26px; display:flex; align-items:center; background:#010913; }
-  #ticker-inner { display:flex; gap:32px; animation:ticker 90s linear infinite; white-space:nowrap; padding-left:20px; }
-  #tabs { background:#010913; border-bottom:1px solid #071422; padding:0 18px; display:flex; overflow-x:auto; }
-  #tabs button { background:none; padding:9px 14px; font-size:10px; text-transform:uppercase; letter-spacing:1px; white-space:nowrap; transition:color 0.15s; border-bottom:2px solid transparent; color:#2a4060; }
-  #tabs button.active { color:#00FF88; border-bottom:2px solid #00FF88; }
-  #content { animation: fadeIn 0.3s ease; }
-
-  /* DASHBOARD GRID */
-  #dash-grid { display:grid; grid-template-columns:235px 1fr 260px; height:calc(100vh - 130px); overflow:hidden; }
-  #coin-list { border-right:1px solid #071422; overflow-y:auto; padding:8px; }
-  #center-panel { overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:10px; }
-  #news-panel { border-left:1px solid #071422; overflow-y:auto; display:flex; flex-direction:column; }
-
-  .coin-item { padding:8px 10px; border-radius:6px; cursor:pointer; margin-bottom:3px; border:1px solid #071422; transition:all 0.15s; }
-  .coin-item:hover { background:#0a1e3520; }
-  .coin-item.active { background:linear-gradient(135deg,#0a1e35,#071525); }
-  .card { background:#050e1c; border:1px solid #0d1e30; border-radius:8px; padding:14px; }
-  .card-dark { background:#020c18; border:1px solid #071422; border-radius:6px; padding:10px; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-  .grid4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
-  .grid5 { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
-  .label { font-size:8px; color:#2a4060; margin-bottom:4px; letter-spacing:0.5px; }
-  .value { font-family:monospace; font-weight:700; }
-  .green { color:#00FF88; } .red { color:#FF4455; } .yellow { color:#FFB800; } .gray { color:#8899AA; }
-  .news-item { padding:7px 12px; border-bottom:1px solid #080f1a; cursor:pointer; }
-  .news-item:hover { background:#0a1e3515; }
-  .news-breaking { background:#120800 !important; }
-  .table-row { display:grid; padding:9px 14px; border-bottom:1px solid #071422; font-family:monospace; font-size:10px; align-items:center; }
-  .table-head { background:#020c18; font-size:8px; color:#2a4060; text-transform:uppercase; }
-
-  /* Progress bar */
-  .progress-bg { height:2px; background:#0a1828; border-radius:1px; }
-  .progress-fill { height:100%; border-radius:1px; transition:width 0.5s; }
-
-  @media (max-width: 900px) {
-    #dash-grid { grid-template-columns: 1fr; height:auto; }
-    #news-panel { display:none; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;scrollbar-width:thin;scrollbar-color:#1a2e42 #010913}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#1a2e42;border-radius:2px}
+body{background:#010913;color:#B8CCD8;font-family:'Courier New',monospace;font-size:12px;overflow-x:hidden}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sp{display:inline-block;animation:spin 1s linear infinite}
+.dot{width:6px;height:6px;border-radius:50%;animation:pulse 2s infinite;display:inline-block;flex-shrink:0}
+.tag{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:700;letter-spacing:.5px;font-family:monospace;white-space:nowrap}
+button{cursor:pointer;font-family:monospace;border:none;outline:none;transition:opacity .15s}
+button:hover{opacity:.8}
+.card{background:#050e1c;border:1px solid #0d1e30;border-radius:8px;padding:14px}
+.cdark{background:#020c18;border:1px solid #071422;border-radius:6px;padding:10px}
+.lbl{font-size:8px;color:#2a4060;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.green{color:#00FF88}.red{color:#FF4455}.yel{color:#FFB800}.gray{color:#8899AA}.blue{color:#00AAFF}
+#hdr{background:linear-gradient(90deg,#010913,#031528,#010913);border-bottom:1px solid #0a1f35;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+#tkw{overflow:hidden;border-bottom:1px solid #071422;height:26px;display:flex;align-items:center;background:#010913}
+#tki{display:flex;gap:32px;animation:ticker 90s linear infinite;white-space:nowrap;padding-left:20px}
+#tabs{background:#010913;border-bottom:1px solid #071422;padding:0 18px;display:flex;overflow-x:auto}
+#tabs button{background:none;padding:9px 14px;font-size:10px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;border-bottom:2px solid transparent;color:#2a4060}
+#tabs button.act{color:#00FF88;border-bottom:2px solid #00FF88}
+#dg{display:grid;grid-template-columns:235px 1fr 258px;height:calc(100vh - 132px);overflow:hidden}
+#cl{border-right:1px solid #071422;overflow-y:auto;padding:8px}
+#cp{overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+#np{border-left:1px solid #071422;overflow-y:auto;display:flex;flex-direction:column}
+.ci{padding:8px 10px;border-radius:6px;cursor:pointer;margin-bottom:3px;border:1px solid #071422;transition:all .15s}
+.ci:hover{background:#0a1e3520}
+.tr{display:grid;padding:9px 14px;border-bottom:1px solid #071422;font-family:monospace;font-size:10px;align-items:center}
+.th{background:#020c18;font-size:8px;color:#2a4060;text-transform:uppercase;letter-spacing:.5px}
+.ni{padding:7px 12px;border-bottom:1px solid #080f1a;cursor:pointer}
+.ni:hover{background:#0a1e3515}
+.nb{background:#120800!important}
+.tc{display:none;padding:14px;animation:fadeIn .3s ease}
+.tc.act{display:block}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div id="header">
+<div id="hdr">
   <div style="display:flex;align-items:center;gap:12px">
     <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#00FF88,#00AAFF);display:flex;align-items:center;justify-content:center;font-size:20px">⚡</div>
     <div>
       <div style="font-size:16px;font-weight:700;color:#E0F0FF;letter-spacing:2px">ALPHACLAW <span class="green">v3</span></div>
-      <div style="font-size:8px;color:#2a4060;letter-spacing:1px">CRYPTO INTELLIGENCE · DADOS AO VIVO</div>
+      <div style="font-size:8px;color:#2a4060;letter-spacing:1px">CRYPTO INTELLIGENCE · DADOS AO VIVO · BYBIT</div>
     </div>
   </div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-    <div id="status-prices" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FFB80008;border:1px solid #FFB80025">
-      <div class="dot" style="background:#FFB800"></div>
-      <span style="font-size:8px;color:#FFB800">CARREGANDO...</span>
-    </div>
-    <div id="status-news" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FFB80008;border:1px solid #FFB80025">
-      <div class="dot" style="background:#FFB800"></div>
-      <span style="font-size:8px;color:#FFB800">NOTÍCIAS...</span>
-    </div>
-    <div style="text-align:center;padding:4px 10px;border-radius:5px" id="regime-box">
-      <div class="label">REGIME</div>
-      <div id="regime-val" style="font-size:10px;font-weight:700;color:#8899AA">NEUTRAL</div>
-    </div>
-    <div style="text-align:center">
-      <div class="label">FEAR & GREED</div>
-      <div id="fg-val" style="font-size:14px;font-weight:700;color:#FFB800">50 <span style="font-size:9px;color:#4a6060">Neutral</span></div>
-    </div>
-    <div style="text-align:center">
-      <div class="label">ATUALIZADO</div>
-      <div id="last-update" style="font-size:9px;color:#2a4060">—</div>
-    </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div id="stp" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FFB80008;border:1px solid #FFB80025"><div class="dot" style="background:#FFB800"></div><span style="font-size:8px;color:#FFB800">PREÇOS...</span></div>
+    <div id="stn" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FFB80008;border:1px solid #FFB80025"><div class="dot" style="background:#FFB800"></div><span style="font-size:8px;color:#FFB800">NOTÍCIAS...</span></div>
+    <div id="stb" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FF445508;border:1px solid #FF445525;cursor:pointer" onclick="togD()"><div class="dot" style="background:#FF4455"></div><span style="font-size:8px;color:#FF4455">BOT OFFLINE</span></div>
+    <div id="rgb" style="text-align:center;padding:4px 10px;border-radius:5px;background:#8899AA15;border:1px solid #8899AA33"><div class="lbl">REGIME</div><div id="rgv" style="font-size:10px;font-weight:700;color:#8899AA">NEUTRAL</div></div>
+    <div style="text-align:center"><div class="lbl">FEAR&GREED</div><div id="fgv" style="font-size:13px;font-weight:700;color:#FFB800">50</div></div>
+    <div style="text-align:center"><div class="lbl">PAPER</div><div id="blv" style="font-size:12px;font-weight:700;color:#00FF88">$10,000</div></div>
+    <div style="text-align:center"><div class="lbl">CICLO</div><div id="cyv" style="font-size:11px;color:#2a4060">—</div></div>
   </div>
 </div>
 
-<!-- TICKER -->
-<div id="ticker-wrap"><div id="ticker-inner"><span style="color:#2a4060">Carregando preços... <span class="spinner">⟳</span></span></div></div>
+<div id="dg-panel" style="display:none;background:#050e1c;border-bottom:1px solid #0d1e30;padding:12px 18px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="cdark"><div class="lbl" style="margin-bottom:8px">STATUS</div><div id="dchk"></div></div>
+    <div class="cdark"><div class="lbl" style="margin-bottom:8px">COMO CONECTAR O BOT</div>
+      <div style="font-size:9px;color:#8899AA;line-height:2">
+        1. Abra este arquivo no editor<br>
+        2. Linha 2: substitua <code style="background:#010913;padding:1px 4px;border-radius:2px;color:#00AAFF">BOT_API</code> pela URL do seu bot Railway<br>
+        3. Salve e faça upload no GitHub → Railway faz redeploy
+      </div>
+    </div>
+  </div>
+  <div class="cdark" style="margin-top:10px;max-height:80px;overflow-y:auto"><div id="dlg" style="font-size:9px;color:#2a4060;font-family:monospace"></div></div>
+</div>
 
-<!-- TABS -->
+<div id="tkw"><div id="tki"><span style="color:#2a4060"><span class="sp">⟳</span> Carregando preços ao vivo...</span></div></div>
+
 <div id="tabs">
-  <button class="active" onclick="showTab('dashboard')">Dashboard</button>
-  <button onclick="showTab('precos')">Preços</button>
-  <button onclick="showTab('noticias')">Notícias <span id="breaking-badge" style="display:none;margin-left:4px;font-size:7px;background:#FF445520;color:#FF4455;padding:1px 4px;border-radius:2px"></span></button>
-  <button onclick="showTab('sinais')">Sinais do Bot</button>
+  <button class="act" onclick="ST('dash')">Dashboard</button>
+  <button onclick="ST('preco')">Preços</button>
+  <button onclick="ST('sinal')">⚡ Sinais <span id="bsg" style="display:none;font-size:7px;background:#00FF8820;color:#00FF88;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
+  <button onclick="ST('posic')">Posições <span id="bpg" style="display:none;font-size:7px;background:#00AAFF20;color:#00AAFF;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
+  <button onclick="ST('notic')">Notícias <span id="bbg" style="display:none;font-size:7px;background:#FF445520;color:#FF4455;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
+  <button onclick="ST('trade')">Trades & P&L</button>
+  <button onclick="ST('logs')">Logs do Bot</button>
 </div>
 
-<!-- CONTENT -->
-<div id="content">
-
-  <!-- DASHBOARD -->
-  <div id="tab-dashboard">
-    <div id="dash-grid">
-      <!-- Coin list -->
-      <div id="coin-list">
-        <div style="font-size:8px;color:#1a2e42;padding:2px 6px 6px;letter-spacing:1px">TOP 10 ATIVOS</div>
-        <div id="coin-list-items"></div>
-      </div>
-      <!-- Center -->
-      <div id="center-panel">
-        <div class="card" id="main-card">
-          <div style="color:#2a4060;font-size:11px"><span class="spinner">⟳</span> Carregando dados ao vivo...</div>
-        </div>
-        <div class="card" id="chart-card">
-          <div class="label">VARIAÇÃO 24H — TOP 10</div>
-          <canvas id="bar-chart" height="120"></canvas>
-        </div>
-        <div class="card" id="market-stats">
-          <div class="label" style="margin-bottom:8px">DADOS DE MERCADO</div>
-          <div class="grid3" id="market-stats-grid"></div>
+<!-- DASHBOARD -->
+<div id="tab-dash" style="display:block">
+  <div id="dg">
+    <div id="cl"><div style="font-size:8px;color:#1a2e42;padding:2px 6px 6px;letter-spacing:1px">TOP 10</div><div id="cli"></div></div>
+    <div id="cp">
+      <div class="card" id="mc"><div style="color:#2a4060"><span class="sp">⟳</span> Carregando...</div></div>
+      <div class="card" id="sc" style="display:none"></div>
+      <div class="card"><div class="lbl">VARIAÇÃO 24H</div><canvas id="bc" height="120"></canvas></div>
+      <div class="card"><div class="lbl" style="margin-bottom:8px">MERCADO</div><div class="g3" id="mg"></div></div>
+    </div>
+    <div id="np">
+      <div style="padding:8px 12px;border-bottom:1px solid #071422;background:#010913;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:9px;color:#2a4060;letter-spacing:1px">📰 NOTÍCIAS</span>
+        <div style="display:flex;gap:3px">
+          <button onclick="SNF('ALL')" data-f="ALL" class="nfb" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:7px;padding:2px 4px;border-radius:3px">ALL</button>
+          <button onclick="SNF('BTC')" data-f="BTC" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">BTC</button>
+          <button onclick="SNF('ETH')" data-f="ETH" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">ETH</button>
+          <button onclick="SNF('SOL')" data-f="SOL" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">SOL</button>
+          <button onclick="SNF('XRP')" data-f="XRP" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">XRP</button>
         </div>
       </div>
-      <!-- News panel -->
-      <div id="news-panel">
-        <div style="padding:8px 12px;border-bottom:1px solid #071422;background:#010913;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:9px;color:#2a4060;letter-spacing:1px">📰 NOTÍCIAS AO VIVO</span>
-          <div style="display:flex;gap:3px" id="news-filter-btns">
-            <button onclick="setNewsFilter('ALL')" class="nf-btn active-nf" data-f="ALL" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:7px;padding:2px 4px;border-radius:3px">ALL</button>
-            <button onclick="setNewsFilter('BTC')" class="nf-btn" data-f="BTC" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">BTC</button>
-            <button onclick="setNewsFilter('ETH')" class="nf-btn" data-f="ETH" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">ETH</button>
-            <button onclick="setNewsFilter('SOL')" class="nf-btn" data-f="SOL" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">SOL</button>
-            <button onclick="setNewsFilter('XRP')" class="nf-btn" data-f="XRP" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">XRP</button>
-          </div>
-        </div>
-        <div id="news-sidebar"><div style="padding:20px;text-align:center;color:#2a4060;font-size:10px"><span class="spinner">⟳</span> Buscando notícias...</div></div>
-      </div>
+      <div id="nsb"><div style="padding:20px;text-align:center;color:#2a4060;font-size:10px"><span class="sp">⟳</span></div></div>
     </div>
   </div>
-
-  <!-- PREÇOS -->
-  <div id="tab-precos" style="display:none;padding:14px">
-    <div class="card" style="overflow:hidden">
-      <div class="table-row table-head" style="grid-template-columns:35px 110px 110px 75px 75px 75px 90px 90px 80px;gap:8px">
-        <span>#</span><span>Ativo</span><span>Preço</span><span>1h</span><span>24h</span><span>7d</span><span>Vol 24h</span><span>MCap</span><span>ATH %</span>
-      </div>
-      <div id="price-table"></div>
-    </div>
-  </div>
-
-  <!-- NOTÍCIAS -->
-  <div id="tab-noticias" style="display:none;padding:14px">
-    <div class="grid4" style="margin-bottom:14px" id="news-stats"></div>
-    <div class="card" style="overflow:hidden">
-      <div style="padding:8px 14px;border-bottom:1px solid #071422;display:flex;justify-content:space-between;align-items:center">
-        <span id="news-count-label" style="font-size:9px;color:#2a4060">CARREGANDO...</span>
-        <div style="display:flex;gap:4px">
-          <button onclick="setNewsFilter2('ALL')" class="nf2-btn active-nf2" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:8px;padding:2px 6px;border-radius:3px">ALL</button>
-          <button onclick="setNewsFilter2('BTC')" class="nf2-btn" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">BTC</button>
-          <button onclick="setNewsFilter2('ETH')" class="nf2-btn" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">ETH</button>
-          <button onclick="setNewsFilter2('XRP')" class="nf2-btn" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">XRP</button>
-          <button onclick="setNewsFilter2('SOL')" class="nf2-btn" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">SOL</button>
-          <button onclick="setNewsFilter2('BNB')" class="nf2-btn" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">BNB</button>
-        </div>
-      </div>
-      <div id="news-full"></div>
-    </div>
-  </div>
-
-  <!-- SINAIS -->
-  <div id="tab-sinais" style="display:none;padding:14px">
-    <div style="background:#0a0500;border:1px solid #FF880020;border-radius:8px;padding:16px;margin-bottom:14px;text-align:center;color:#FF8800;font-size:11px;line-height:1.8">
-      ⚡ Os sinais do bot aparecem aqui quando o Railway estiver online.<br>
-      Configure o <code style="background:#1a0800;padding:1px 6px;border-radius:3px">RAILWAY_API</code> no código com sua URL.<br>
-      <span style="font-size:9px;color:#4a3010">Por enquanto mostrando dados de mercado ao vivo abaixo:</span>
-    </div>
-    <div class="card" style="overflow:hidden">
-      <div class="table-row table-head" style="grid-template-columns:60px 80px 80px 80px 80px 80px 1fr;gap:8px">
-        <span>Ativo</span><span>Preço</span><span>1h</span><span>24h</span><span>Vol</span><span>MCap</span><span>ATH %</span>
-      </div>
-      <div id="signals-table"></div>
-    </div>
-  </div>
-
 </div>
 
-<!-- FOOTER -->
+<!-- PREÇOS -->
+<div id="tab-preco" class="tc">
+  <div class="card" style="overflow:hidden">
+    <div class="tr th" style="grid-template-columns:30px 100px 110px 70px 75px 75px 90px 90px 75px;gap:8px">
+      <span>#</span><span>Ativo</span><span>Preço</span><span>1h</span><span>24h</span><span>7d</span><span>Vol 24h</span><span>MCap</span><span>ATH %</span>
+    </div>
+    <div id="ptbl"></div>
+  </div>
+</div>
+
+<!-- SINAIS -->
+<div id="tab-sinal" class="tc">
+  <div id="sof" style="background:#0a0500;border:1px solid #FF880020;border-radius:8px;padding:18px;margin-bottom:14px;text-align:center;color:#FF8800;font-size:11px;line-height:2">
+    ⚡ Bot Railway offline<br><span style="font-size:9px;color:#4a3010">Configure o BOT_API neste arquivo com a URL do seu bot Railway</span>
+  </div>
+  <div id="son" style="display:none">
+    <div class="g4" style="margin-bottom:14px" id="sstats"></div>
+    <div class="card" style="overflow:hidden">
+      <div class="tr th" style="grid-template-columns:60px 68px 58px 90px 90px 90px 52px 52px 1fr;gap:6px">
+        <span>Ativo</span><span>Sinal</span><span>Conf.</span><span>Entrada</span><span>Stop</span><span>TP1</span><span>R:R</span><span>Strats</span><span>Motivos</span>
+      </div>
+      <div id="stbl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POSIÇÕES -->
+<div id="tab-posic" class="tc">
+  <div class="g3" style="margin-bottom:14px" id="pstats"></div>
+  <div id="pcnt"></div>
+</div>
+
+<!-- NOTÍCIAS -->
+<div id="tab-notic" class="tc">
+  <div class="g4" style="margin-bottom:14px" id="nstats"></div>
+  <div class="card" style="overflow:hidden">
+    <div style="padding:8px 14px;border-bottom:1px solid #071422;display:flex;justify-content:space-between;align-items:center">
+      <span id="nlbl" style="font-size:9px;color:#2a4060">CARREGANDO...</span>
+      <div style="display:flex;gap:4px">
+        <button onclick="SNF2('ALL')" class="nf2" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:8px;padding:2px 6px;border-radius:3px">ALL</button>
+        <button onclick="SNF2('BTC')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">BTC</button>
+        <button onclick="SNF2('ETH')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">ETH</button>
+        <button onclick="SNF2('XRP')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">XRP</button>
+        <button onclick="SNF2('SOL')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">SOL</button>
+        <button onclick="SNF2('BNB')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">BNB</button>
+      </div>
+    </div>
+    <div id="nfl"></div>
+  </div>
+</div>
+
+<!-- TRADES -->
+<div id="tab-trade" class="tc">
+  <div class="g4" style="margin-bottom:14px" id="tstats"></div>
+  <div id="tcnt"></div>
+</div>
+
+<!-- LOGS -->
+<div id="tab-logs" class="tc">
+  <div class="card" style="max-height:78vh;overflow-y:auto">
+    <div style="font-size:9px;color:#2a4060;margin-bottom:10px;border-bottom:1px solid #071422;padding-bottom:8px;display:flex;justify-content:space-between">
+      <span>LOG DO BOT AO VIVO</span><span id="lst" style="font-size:8px;color:#1a2e42">atualiza a cada 15s</span>
+    </div>
+    <div id="lcnt"><div style="text-align:center;padding:30px;color:#2a4060">Aguardando conexão com o bot...</div></div>
+  </div>
+</div>
+
 <div style="border-top:1px solid #071422;padding:5px 18px;display:flex;justify-content:space-between;font-size:8px;color:#1a2e42">
-  <span>AlphaClaw v3 · Preços: CoinGecko · Notícias: CryptoCompare · F&G: Alternative.me</span>
-  <span>⚠ Apenas fins educacionais. Não é recomendação financeira.</span>
+  <span>AlphaClaw v3 · CoinGecko · CryptoCompare · Alternative.me · Railway Bot</span>
+  <span id="ftm"></span>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
-//  CONFIGURAÇÃO
-// ══════════════════════════════════════════════════
-const RAILWAY_API = "https://alphaclaw-bot-production.up.railway.app";
+// ═══════════════════════════════════════════════════
+//  ⚙️  TROQUE PELA URL DO SEU BOT NO RAILWAY
+//  Ex: https://alphaclaw-bot-production.up.railway.app
+// ═══════════════════════════════════════════════════
+const BOT_API = "https://alphaclaw-bot-production.up.railway.app";
 
-const COIN_COLORS = {
-  BTC:"#F7931A",ETH:"#627EEA",BNB:"#F3BA2F",XRP:"#346AA9",SOL:"#9945FF",
-  ADA:"#0033AD",DOGE:"#C2A633",AVAX:"#E84142",DOT:"#E6007A",LINK:"#2A5ADA"
-};
-const COIN_IDS = {
-  BTC:"bitcoin",ETH:"ethereum",BNB:"binancecoin",XRP:"ripple",SOL:"solana",
-  ADA:"cardano",DOGE:"dogecoin",AVAX:"avalanche-2",DOT:"polkadot",LINK:"chainlink"
-};
-const SYMBOLS = Object.keys(COIN_COLORS);
+const CLR={BTC:"#F7931A",ETH:"#627EEA",BNB:"#F3BA2F",XRP:"#346AA9",SOL:"#9945FF",ADA:"#0033AD",DOGE:"#C2A633",AVAX:"#E84142",DOT:"#E6007A",LINK:"#2A5ADA"};
+const IDS={BTC:"bitcoin",ETH:"ethereum",BNB:"binancecoin",XRP:"ripple",SOL:"solana",ADA:"cardano",DOGE:"dogecoin",AVAX:"avalanche-2",DOT:"polkadot",LINK:"chainlink"};
+const SYM=Object.keys(CLR);
 
-// ══════════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════════
-let prices = {};
-let allNews = [];
-let selectedCoin = "BTC";
-let newsFilter = "ALL";
-let newsFilter2 = "ALL";
-let fg = {value:50, classification:"Neutral"};
+let P={},AN=[],BS={},BP=[],BT={trades:[],stats:{}},BL=[],BH=null,BM={};
+let SC="BTC",NF="ALL",NF2="ALL",BON=false,fg={value:50,classification:"Neutral"};
 
-// ══════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════
-const fmtP = n => !n ? "—" : n >= 1000 ? "$" + n.toLocaleString("en",{maximumFractionDigits:2}) : n >= 1 ? "$" + n.toFixed(4) : "$" + n.toFixed(6);
-const fmtB = n => !n ? "—" : n >= 1e9 ? "$" + (n/1e9).toFixed(2) + "B" : n >= 1e6 ? "$" + (n/1e6).toFixed(2) + "M" : "$" + n.toFixed(0);
-const pct  = n => (n >= 0 ? "+" : "") + (n||0).toFixed(2) + "%";
-const pctColor = n => n >= 0 ? "#00FF88" : "#FF4455";
-const tag  = (text, color, bg) => `<span class="tag" style="color:${color};background:${bg||color+'18'}">${text}</span>`;
+const fP=n=>!n?"—":n>=1000?"$"+n.toLocaleString("en",{maximumFractionDigits:2}):n>=1?"$"+n.toFixed(4):"$"+n.toFixed(6);
+const fB=n=>!n?"—":n>=1e9?"$"+(n/1e9).toFixed(2)+"B":n>=1e6?"$"+(n/1e6).toFixed(2)+"M":"$"+n.toFixed(0);
+const pc=n=>(n>=0?"+":"")+((n||0).toFixed(2))+"%";
+const gc=n=>n>=0?"#00FF88":"#FF4455";
+const sC=s=>s==="LONG"?"#00FF88":s==="SHORT"?"#FF4455":"#FFB800";
+const sBg=s=>s==="LONG"?"#00FF8815":s==="SHORT"?"#FF445515":"#FFB80015";
+const tg=(t,c,bg)=>`<span class="tag" style="color:${c};background:${bg||c+"18"}">${t}</span>`;
+const DL=m=>{const e=document.getElementById("dlg");if(e)e.innerHTML=`<div>${new Date().toLocaleTimeString("pt-BR")} — ${m}</div>`+e.innerHTML;};
 
-// ══════════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════════
-function showTab(name) {
-  ["dashboard","precos","noticias","sinais"].forEach(t => {
-    document.getElementById("tab-" + t).style.display = t === name ? "block" : "none";
-  });
-  document.querySelectorAll("#tabs button").forEach((b,i) => {
-    b.classList.remove("active");
-    if (b.textContent.trim().toLowerCase().startsWith(name.replace("precos","preços").replace("noticias","notícias").replace("sinais","sinais"))) b.classList.add("active");
-  });
-  // Fix tab button matching
-  const tabNames = ["dashboard","precos","noticias","sinais"];
-  document.querySelectorAll("#tabs button").forEach((b,i) => {
-    b.classList.toggle("active", tabNames[i] === name);
-  });
-  if (name === "noticias") renderFullNews();
-  if (name === "sinais") renderSignalsTable();
+function setST(id,ok,msg){
+  const e=document.getElementById(id),c=ok?"#00FF88":"#FF4455",bg=ok?"#00FF8808":"#FF445508",br=ok?"#00FF8825":"#FF445525";
+  e.style.background=bg;e.style.border="1px solid "+br;
+  e.innerHTML=`<div class="dot" style="background:${c}"></div><span style="font-size:8px;color:${c}">${msg}</span>`;
 }
 
-// ══════════════════════════════════════════════════
-//  FETCH PREÇOS — CoinGecko
-// ══════════════════════════════════════════════════
-async function fetchPrices() {
-  try {
-    const ids = Object.values(COIN_IDS).join(",");
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=1h,24h,7d&sparkline=true`;
-    const r = await fetch(url);
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    const data = await r.json();
-    data.forEach(c => {
-      const sym = Object.keys(COIN_IDS).find(k => COIN_IDS[k] === c.id);
-      if (sym) prices[sym] = {
-        price: c.current_price,
-        change1h: c.price_change_percentage_1h_in_currency || 0,
-        change24h: c.price_change_percentage_24h_in_currency || 0,
-        change7d: c.price_change_percentage_7d_in_currency || 0,
-        high24h: c.high_24h, low24h: c.low_24h,
-        vol24h: c.total_volume, mcap: c.market_cap,
-        rank: c.market_cap_rank, ath: c.ath,
-        athChange: c.ath_change_percentage,
-        sparkline: (c.sparkline_in_7d?.price||[]).filter((_,i,a)=>i%Math.floor(a.length/24)===0).slice(-24),
-      };
+let diagOpen=false;
+function togD(){diagOpen=!diagOpen;document.getElementById("dg-panel").style.display=diagOpen?"block":"none";RD();}
+function RD(){
+  document.getElementById("dchk").innerHTML=[
+    [Object.keys(P).length>0,"Preços CoinGecko"],
+    [AN.length>0,"Notícias CryptoCompare"],
+    [BON,"Bot Railway conectado"],
+    [BON&&Object.keys(BS).length>0,"Sinais recebidos"],
+    [BON&&BP!==undefined,"Posições sincronizadas"],
+  ].map(([ok,l])=>`<div style="font-size:10px;color:${ok?"#00FF88":"#FF4455"};margin-bottom:3px">${ok?"✅":"❌"} ${l}</div>`).join("");
+}
+
+const TABS=["dash","preco","sinal","posic","notic","trade","logs"];
+function ST(n){
+  document.getElementById("tab-dash").style.display=n==="dash"?"block":"none";
+  TABS.filter(t=>t!=="dash").forEach(t=>{const e=document.getElementById("tab-"+t);if(e){e.classList.toggle("act",t===n);}});
+  document.querySelectorAll("#tabs button").forEach((b,i)=>b.classList.toggle("act",TABS[i]===n));
+  if(n==="notic")RFN();if(n==="trade")RTR();if(n==="logs")RLG();if(n==="posic")RPS();if(n==="sinal")RSG();
+}
+
+// ── FETCH PREÇOS ──────────────────────────────────
+async function FP(){
+  try{
+    const r=await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${Object.values(IDS).join(",")}&price_change_percentage=1h,24h,7d&sparkline=true`);
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    (await r.json()).forEach(c=>{
+      const s=Object.keys(IDS).find(k=>IDS[k]===c.id);
+      if(s)P[s]={price:c.current_price,c1:c.price_change_percentage_1h_in_currency||0,c24:c.price_change_percentage_24h_in_currency||0,c7:c.price_change_percentage_7d_in_currency||0,hi:c.high_24h,lo:c.low_24h,vol:c.total_volume,mc:c.market_cap,rk:c.market_cap_rank,ath:c.ath,athC:c.ath_change_percentage,sp:(c.sparkline_in_7d?.price||[]).filter((_,i,a)=>i%Math.floor(a.length/24)===0).slice(-24)};
     });
-    setStatus("prices", true);
-    document.getElementById("last-update").textContent = new Date().toLocaleTimeString("pt-BR");
-    renderAll();
-  } catch(e) {
-    setStatus("prices", false, "ERRO: " + e.message);
-  }
+    setST("stp",true,"PREÇOS AO VIVO ✓");
+    RA();
+  }catch(e){setST("stp",false,"ERRO COINGECKO");DL("❌ CoinGecko: "+e.message);}
 }
 
-// ══════════════════════════════════════════════════
-//  FETCH FEAR & GREED
-// ══════════════════════════════════════════════════
-async function fetchFG() {
-  try {
-    const r = await fetch("https://api.alternative.me/fng/?limit=1");
-    const d = await r.json();
-    if (d.data?.[0]) {
-      fg = {value: +d.data[0].value, classification: d.data[0].value_classification};
-      const v = fg.value;
-      const c = v < 25 ? "#FF4455" : v < 45 ? "#FF8800" : v > 75 ? "#FF4455" : v > 55 ? "#00FF88" : "#FFB800";
-      document.getElementById("fg-val").innerHTML = `<span style="color:${c}">${v}</span> <span style="font-size:9px;color:#4a6060">${fg.classification}</span>`;
-    }
-  } catch {}
+// ── FETCH F&G ────────────────────────────────────
+async function FFG(){
+  try{
+    const d=await fetch("https://api.alternative.me/fng/?limit=1").then(r=>r.json());
+    if(d.data?.[0]){fg={value:+d.data[0].value,classification:d.data[0].value_classification};}
+    const v=fg.value,c=v<25?"#FF4455":v<45?"#FF8800":v>75?"#FF4455":v>55?"#00FF88":"#FFB800";
+    document.getElementById("fgv").innerHTML=`<span style="color:${c}">${v}</span> <span style="font-size:8px;color:#4a6060">${fg.classification}</span>`;
+  }catch{}
 }
 
-// ══════════════════════════════════════════════════
-//  FETCH NOTÍCIAS — CryptoCompare
-// ══════════════════════════════════════════════════
-async function fetchNews() {
-  try {
-    const r = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=40");
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    const d = await r.json();
-    allNews = (d.Data||[]).map(n => {
-      const title = n.title.toLowerCase();
-      const coin = ["btc","bitcoin"].some(x=>title.includes(x)) ? "BTC"
-        : ["eth","ethereum"].some(x=>title.includes(x)) ? "ETH"
-        : ["xrp","ripple"].some(x=>title.includes(x)) ? "XRP"
-        : ["sol","solana"].some(x=>title.includes(x)) ? "SOL"
-        : ["bnb","binance"].some(x=>title.includes(x)) ? "BNB"
-        : ["ada","cardano"].some(x=>title.includes(x)) ? "ADA"
-        : ["doge","dogecoin"].some(x=>title.includes(x)) ? "DOGE"
-        : ["avax","avalanche"].some(x=>title.includes(x)) ? "AVAX"
-        : ["dot","polkadot"].some(x=>title.includes(x)) ? "DOT"
-        : ["link","chainlink"].some(x=>title.includes(x)) ? "LINK"
-        : "CRIPTO";
-      const cats = (n.categories||"").toLowerCase();
-      const isReg  = cats.includes("regulation") || title.includes("sec") || title.includes("ban");
-      const isBull = title.includes("surge")||title.includes("rally")||title.includes("bull")||title.includes("ath")||title.includes("record")||title.includes("approve")||title.includes("soar");
-      const isBear = title.includes("crash")||title.includes("hack")||title.includes("scam")||title.includes("fraud")||title.includes("collapse")||title.includes("plunge")||title.includes("drop");
-      const impact = isReg ? (isBull?7:isBear?-7:2) : isBull?4:isBear?-4:(Math.random()*2-0.5);
-      const isBreaking = Math.abs(impact) >= 6 || n.title.includes("BREAKING");
-      const age = Date.now()/1000 - n.published_on;
-      const timeStr = age<3600 ? Math.floor(age/60)+"m atrás" : age<86400 ? Math.floor(age/3600)+"h atrás" : Math.floor(age/86400)+"d atrás";
-      return { title:n.title, source:n.source_info?.name||n.source, url:n.url, coin, impact:+impact.toFixed(1), time:timeStr, isBreaking,
-        category:isReg?"REGULATÓRIO":cats.includes("market")?"MERCADO":cats.includes("tech")?"TÉCNICO":"GERAL" };
+// ── FETCH NOTÍCIAS ───────────────────────────────
+async function FN(){
+  try{
+    const r=await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN&sortOrder=latest&limit=40");
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    AN=(d.Data||[]).map(n=>{
+      const t=n.title.toLowerCase();
+      const coin=["btc","bitcoin"].some(x=>t.includes(x))?"BTC":["eth","ethereum"].some(x=>t.includes(x))?"ETH":["xrp","ripple"].some(x=>t.includes(x))?"XRP":["sol","solana"].some(x=>t.includes(x))?"SOL":["bnb","binance"].some(x=>t.includes(x))?"BNB":["ada","cardano"].some(x=>t.includes(x))?"ADA":["doge","dogecoin"].some(x=>t.includes(x))?"DOGE":["avax","avalanche"].some(x=>t.includes(x))?"AVAX":["dot","polkadot"].some(x=>t.includes(x))?"DOT":["link","chainlink"].some(x=>t.includes(x))?"LINK":"CRIPTO";
+      const cats=(n.categories||"").toLowerCase();
+      const reg=cats.includes("regulation")||t.includes("sec")||t.includes("ban");
+      const bull=t.includes("surge")||t.includes("rally")||t.includes("bull")||t.includes("ath")||t.includes("approve")||t.includes("soar");
+      const bear=t.includes("crash")||t.includes("hack")||t.includes("scam")||t.includes("collapse")||t.includes("plunge");
+      const imp=reg?(bull?7:bear?-7:2):bull?4:bear?-4:(Math.random()*2-.5);
+      const brk=Math.abs(imp)>=6||n.title.includes("BREAKING");
+      const age=Date.now()/1000-n.published_on;
+      const ts=age<3600?Math.floor(age/60)+"m atrás":age<86400?Math.floor(age/3600)+"h atrás":Math.floor(age/86400)+"d atrás";
+      return{title:n.title,source:n.source_info?.name||n.source,url:n.url,coin,imp:+imp.toFixed(1),time:ts,brk,cat:reg?"REGULATÓRIO":cats.includes("market")?"MERCADO":"GERAL"};
     });
-    const breaking = allNews.filter(n=>n.isBreaking).length;
-    const badge = document.getElementById("breaking-badge");
-    if (breaking > 0) { badge.style.display="inline"; badge.textContent = breaking + " 🔴"; }
-    setStatus("news", true, allNews.length + " NOTÍCIAS ✓");
-    renderNewsSidebar();
-    renderNewsStats();
-  } catch(e) {
-    setStatus("news", false, "ERRO NOTÍCIAS");
-  }
+    const brk=AN.filter(n=>n.brk).length;
+    const bb=document.getElementById("bbg");if(brk>0){bb.style.display="inline";bb.textContent=brk+" 🔴";}
+    setST("stn",true,AN.length+" NOTÍCIAS ✓");
+    RNS();
+  }catch(e){setST("stn",false,"ERRO NOTÍCIAS");DL("❌ Notícias: "+e.message);}
 }
 
-// ══════════════════════════════════════════════════
-//  STATUS
-// ══════════════════════════════════════════════════
-function setStatus(type, ok, msg) {
-  const el = document.getElementById("status-" + type);
-  const color = ok ? "#00FF88" : "#FF4455";
-  const bg = ok ? "#00FF8808" : "#FF445508";
-  const border = ok ? "#00FF8825" : "#FF445525";
-  const defaultMsg = type === "prices" ? (ok?"PREÇOS AO VIVO ✓":"ERRO COINGECKO") : (ok?"":"ERRO NOTÍCIAS");
-  el.style.background = bg; el.style.border = "1px solid " + border;
-  el.innerHTML = `<div class="dot" style="background:${color}"></div><span style="font-size:8px;color:${color}">${msg||defaultMsg}</span>`;
+// ── FETCH BOT ─────────────────────────────────────
+async function FB(){
+  try{
+    const h=await fetch(BOT_API+"/health",{signal:AbortSignal.timeout(5000)}).then(r=>r.ok?r.json():null).catch(()=>null);
+    if(!h){BON=false;setST("stb",false,"BOT OFFLINE");document.getElementById("cyv").textContent="—";DL("❌ Bot offline — "+BOT_API);return;}
+    BON=true;BH=h;
+    setST("stb",true,"BOT ONLINE · Ciclo #"+h.cycle);
+    document.getElementById("cyv").textContent="#"+h.cycle;
+    DL("✅ Bot conectado — Ciclo #"+h.cycle);
+    const [s,pos,m,t,l]=await Promise.all([
+      fetch(BOT_API+"/signals").then(r=>r.json()).catch(()=>({signals:[]})),
+      fetch(BOT_API+"/positions").then(r=>r.json()).catch(()=>({positions:[],balance:10000})),
+      fetch(BOT_API+"/market").then(r=>r.json()).catch(()=>({})),
+      fetch(BOT_API+"/trades?limit=30").then(r=>r.json()).catch(()=>({trades:[],stats:{}})),
+      fetch(BOT_API+"/logs?limit=80").then(r=>r.json()).catch(()=>({logs:[]})),
+    ]);
+    BS={};(s.signals||[]).forEach(x=>{BS[x.symbol?.replace("/USDT","")]=x;});
+    BP=pos.positions||[];BM=m;BT=t;BL=[...(l.logs||[])].reverse();
+    if(m.balance)document.getElementById("blv").textContent="$"+m.balance.toLocaleString("en",{maximumFractionDigits:2});
+    const reg=m.regime||"NEUTRAL",rc={CAPITULATION:"#FF4455",FEAR:"#FF8800",EUPHORIA:"#FF4455",GREED:"#FFB800",NEUTRAL:"#8899AA",OPTIMISM:"#00FF88"}[reg]||"#8899AA";
+    document.getElementById("rgv").textContent=reg;document.getElementById("rgv").style.color=rc;
+    document.getElementById("rgb").style.background=rc+"15";document.getElementById("rgb").style.border="1px solid "+rc+"33";
+    const ls=Object.values(BS).filter(s=>s.signal==="LONG").length,ss=Object.values(BS).filter(s=>s.signal==="SHORT").length;
+    const bs=document.getElementById("bsg");if(ls+ss>0){bs.style.display="inline";bs.textContent=ls+"L "+ss+"S";}
+    const bp=document.getElementById("bpg");if(BP.length>0){bp.style.display="inline";bp.textContent=BP.length;}
+    RMC();RCL();
+  }catch(e){BON=false;setST("stb",false,"BOT OFFLINE");DL("❌ Erro: "+e.message);}
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER COIN LIST
-// ══════════════════════════════════════════════════
-function renderCoinList() {
-  const el = document.getElementById("coin-list-items");
-  el.innerHTML = SYMBOLS.map(sym => {
-    const p = prices[sym] || {};
-    const c = COIN_COLORS[sym];
-    const isActive = sym === selectedCoin;
-    const chg = p.change24h||0;
-    return `<div class="coin-item${isActive?" active":""}" onclick="selectCoin('${sym}')" style="${isActive?"border-color:"+c+"44":""};background:${isActive?"linear-gradient(135deg,#0a1e35,#071525)":"transparent"}">
+// ── RENDER COIN LIST ──────────────────────────────
+function RCL(){
+  document.getElementById("cli").innerHTML=SYM.map(s=>{
+    const p=P[s]||{},b=BS[s]||{},c=CLR[s],act=s===SC;
+    const chg=p.c24||0;
+    return `<div class="ci" style="border-color:${act?c+"44":"#071422"};background:${act?"linear-gradient(135deg,#0a1e35,#071525)":"transparent"}" onclick="SC='${s}';RA()">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="display:flex;align-items:center;gap:5px">
-          <div style="width:7px;height:7px;border-radius:50%;background:${c}"></div>
-          <span style="font-weight:700;color:#D0E0F0">${sym}</span>
-          ${p.rank?`<span style="font-size:7px;color:#1a2e42">#${p.rank}</span>`:""}
-        </div>
-        <span style="font-size:9px;color:#2a4060">—</span>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:50%;background:${c}"></div><span style="font-weight:700;color:#D0E0F0">${s}</span>${p.rk?`<span style="font-size:7px;color:#1a2e42">#${p.rk}</span>`:""}</div>
+        ${b.signal?tg(b.signal,sC(b.signal),sBg(b.signal)):`<span style="font-size:9px;color:#1a2e42">—</span>`}
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:3px;align-items:center">
-        <span style="font-size:11px;font-family:monospace;font-weight:700;color:#E8F4FF">${p.price?fmtP(p.price):'<span style="color:#1a2e42">loading...</span>'}</span>
-        <span style="font-size:10px;color:${pctColor(chg)};font-weight:700">${pct(chg)}</span>
+        <span style="font-size:12px;font-family:monospace;font-weight:700;color:#E8F4FF">${p.price?fP(p.price):'<span style="color:#1a2e42;font-size:9px">…</span>'}</span>
+        <span style="font-size:10px;color:${gc(chg)};font-weight:700">${pc(chg)}</span>
       </div>
+      ${b.signal&&b.signal!=="NEUTRAL"?`<div style="margin-top:3px"><div style="height:2px;background:#0a1828;border-radius:1px"><div style="height:100%;width:${b.confidence||0}%;background:${sC(b.signal)};border-radius:1px"></div></div><div style="font-size:7px;color:#2a4060;margin-top:1px">${b.strategy_count||0} strats · ${(b.confidence||0).toFixed(0)}%</div></div>`:""}
     </div>`;
   }).join("");
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER MAIN CARD
-// ══════════════════════════════════════════════════
-function renderMainCard() {
-  const sym = selectedCoin;
-  const p = prices[sym] || {};
-  const c = COIN_COLORS[sym];
-  const el = document.getElementById("main-card");
-  if (!p.price) { el.innerHTML = `<div style="color:#2a4060"><span class="spinner">⟳</span> Carregando ${sym}...</div>`; return; }
-
-  // Sparkline canvas
-  const sparkHtml = p.sparkline?.length > 0 ? `
-    <div style="margin-top:10px">
-      <div class="label">PREÇO 7 DIAS</div>
-      <canvas id="sparkline-canvas" height="50" style="width:100%"></canvas>
-    </div>` : "";
-
-  el.innerHTML = `
+// ── RENDER MAIN CARD ──────────────────────────────
+function RMC(){
+  const s=SC,p=P[s]||{},b=BS[s]||{},c=CLR[s],e=document.getElementById("mc");
+  if(!p.price){e.innerHTML=`<div style="color:#2a4060"><span class="sp">⟳</span> Carregando ${s}...</div>`;return;}
+  e.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <div style="width:12px;height:12px;border-radius:50%;background:${c}"></div>
-          <span style="font-size:20px;font-weight:700;color:#E8F4FF">${sym}/USDT</span>
-          ${p.rank?tag("#"+p.rank,"#4a6080"):""}
+          <span style="font-size:20px;font-weight:700;color:#E8F4FF">${s}/USDT</span>
+          ${p.rk?tg("#"+p.rk,"#4a6080"):""}
         </div>
-        <div style="font-size:34px;font-weight:700;font-family:monospace;color:#F0F8FF">${fmtP(p.price)}</div>
+        <div style="font-size:34px;font-weight:700;font-family:monospace;color:#F0F8FF">${fP(p.price)}</div>
         <div style="display:flex;gap:16px;margin-top:4px;font-size:11px">
-          <span style="color:${pctColor(p.change1h)}">1h: ${pct(p.change1h)}</span>
-          <span style="color:${pctColor(p.change24h)};font-weight:700">24h: ${pct(p.change24h)}</span>
-          <span style="color:${pctColor(p.change7d)}">7d: ${pct(p.change7d)}</span>
+          <span style="color:${gc(p.c1)}">1h: ${pc(p.c1)}</span>
+          <span style="color:${gc(p.c24)};font-weight:700">24h: ${pc(p.c24)}</span>
+          <span style="color:${gc(p.c7)}">7d: ${pc(p.c7)}</span>
         </div>
         <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;color:#2a4060">
-          <span>Máx: <span style="color:#00FF88">${fmtP(p.high24h)}</span></span>
-          <span>Mín: <span style="color:#FF4455">${fmtP(p.low24h)}</span></span>
-          <span>Vol: <span style="color:#8899AA">${fmtB(p.vol24h)}</span></span>
-          <span>MCap: <span style="color:#8899AA">${fmtB(p.mcap)}</span></span>
+          <span>Máx: <span class="green">${fP(p.hi)}</span></span>
+          <span>Mín: <span class="red">${fP(p.lo)}</span></span>
+          <span>Vol: <span class="gray">${fB(p.vol)}</span></span>
+          <span>MCap: <span class="gray">${fB(p.mc)}</span></span>
         </div>
-        <div style="margin-top:4px;font-size:10px;color:#2a4060">
-          ATH: <span style="color:#8899AA">${fmtP(p.ath)}</span>
-          <span style="color:#FF4455;margin-left:4px">${(p.athChange||0).toFixed(1)}% do ATH</span>
-        </div>
+        <div style="margin-top:4px;font-size:10px;color:#2a4060">ATH: <span class="gray">${fP(p.ath)}</span> <span class="red">${(p.athC||0).toFixed(1)}%</span></div>
       </div>
-      <div style="text-align:center">
-        <div style="padding:10px 18px;border-radius:8px;background:#FFB80015;border:2px solid #FFB80044;color:#FFB800;font-size:18px;font-weight:700;letter-spacing:2px;margin-bottom:6px">
-          NEUTRO
-        </div>
-        <div style="font-size:8px;color:#2a4060">Bot Railway offline</div>
-        <div style="font-size:8px;color:#FF4455;margin-top:2px">Conecte para sinais</div>
+      <div style="text-align:center;min-width:130px">
+        <div style="padding:10px 16px;border-radius:8px;background:${sBg(b.signal||"NEUTRAL")};border:2px solid ${sC(b.signal||"NEUTRAL")}44;color:${sC(b.signal||"NEUTRAL")};font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:6px">${b.signal||"—"}</div>
+        ${BON?`<div style="font-size:9px;color:#2a4060">${b.strategy_count||0} estratégias</div><div style="font-size:9px;color:${sC(b.signal||"NEUTRAL")}">Conf: ${(b.confidence||0).toFixed(0)}%</div>${b.rr_ratio>0?`<div style="font-size:9px;color:#8899AA">R:R 1:${b.rr_ratio}</div>`:""}`:
+        `<div style="font-size:8px;color:#FF4455;margin-top:4px">Bot offline</div>`}
       </div>
     </div>
-    ${sparkHtml}`;
+    ${p.sp?.length>0?`<div style="margin-top:10px"><div class="lbl">PREÇO 7 DIAS</div><canvas id="spk" height="50" style="width:100%"></canvas></div>`:""}`;
 
-  // Draw sparkline
-  if (p.sparkline?.length > 0) {
-    setTimeout(() => {
-      const canvas = document.getElementById("sparkline-canvas");
-      if (!canvas) return;
-      canvas.width = canvas.offsetWidth;
-      const ctx = canvas.getContext("2d");
-      const data = p.sparkline;
-      const min = Math.min(...data), max = Math.max(...data);
-      const w = canvas.width, h = canvas.height;
-      const isUp = (p.change7d||0) >= 0;
-      ctx.clearRect(0,0,w,h);
-      const grad = ctx.createLinearGradient(0,0,0,h);
-      grad.addColorStop(0, isUp?"rgba(0,255,136,0.3)":"rgba(255,68,85,0.3)");
-      grad.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.beginPath();
-      data.forEach((v,i) => {
-        const x = (i/(data.length-1))*w, y = h - ((v-min)/(max-min||1))*(h-4)-2;
-        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-      });
-      ctx.strokeStyle = isUp?"#00FF88":"#FF4455";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
-      ctx.fillStyle = grad; ctx.fill();
-    }, 50);
-  }
+  // Signal card
+  const sc=document.getElementById("sc");
+  if(BON&&b.signal&&b.signal!=="NEUTRAL"&&b.stop_loss>0){
+    sc.style.display="block";sc.style.border=`1px solid ${sC(b.signal)}28`;
+    sc.innerHTML=`<div style="font-size:9px;color:${sC(b.signal)};margin-bottom:10px;letter-spacing:1px;font-weight:700">⚡ PARÂMETROS — ${b.signal} · R:R 1:${b.rr_ratio}</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">
+      ${[["Entrada",fP(b.entry),"#8899AA"],["Stop Loss",fP(b.stop_loss),"#FF4455"],["TP1 40%",fP(b.tp1),"#00CC66"],["TP2 30%",fP(b.tp2),"#00EE77"],["TP3 30%",fP(b.tp3),"#00FF88"]].map(([k,v,c])=>`<div style="text-align:center;padding:8px;background:#020c18;border-radius:6px;border:1px solid #071422"><div style="font-size:7px;color:#2a4060;margin-bottom:3px">${k}</div><div style="font-size:10px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("")}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">${(b.reasons||[]).map(r=>`<span style="font-size:9px;color:#8899AA;background:#071422;padding:2px 8px;border-radius:3px">✓ ${r}</span>`).join("")}</div>`;
+  } else { sc.style.display="none"; }
+
+  // Sparkline
+  if(p.sp?.length>0){setTimeout(()=>{
+    const cv=document.getElementById("spk");if(!cv)return;cv.width=cv.offsetWidth;
+    const ctx=cv.getContext("2d"),d=p.sp,mn=Math.min(...d),mx=Math.max(...d),w=cv.width,h=50,up=(p.c7||0)>=0;
+    ctx.clearRect(0,0,w,h);
+    const gr=ctx.createLinearGradient(0,0,0,h);gr.addColorStop(0,up?"rgba(0,255,136,.3)":"rgba(255,68,85,.3)");gr.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.beginPath();d.forEach((v,i)=>{const x=(i/(d.length-1))*w,y=h-((v-mn)/(mx-mn||1))*(h-4)-2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.strokeStyle=up?"#00FF88":"#FF4455";ctx.lineWidth=1.5;ctx.stroke();
+    ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+  },50);}
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER BAR CHART
-// ══════════════════════════════════════════════════
-function renderBarChart() {
-  const canvas = document.getElementById("bar-chart");
-  if (!canvas || Object.keys(prices).length === 0) return;
-  canvas.width = canvas.offsetWidth || 500;
-  const ctx = canvas.getContext("2d");
-  const data = SYMBOLS.map(s => ({sym:s, val:prices[s]?.change24h||0}));
-  const maxAbs = Math.max(...data.map(d=>Math.abs(d.val)), 0.1);
-  const w = canvas.width, h = 120;
-  const barW = (w - 20) / data.length - 4;
+// ── BAR CHART ─────────────────────────────────────
+function RBC(){
+  const cv=document.getElementById("bc");if(!cv||!Object.keys(P).length)return;
+  cv.width=cv.offsetWidth||500;
+  const ctx=cv.getContext("2d"),data=SYM.map(s=>({s,v:P[s]?.c24||0})),mA=Math.max(...data.map(d=>Math.abs(d.v)),.1),w=cv.width,h=120,bw=(w-20)/data.length-4;
   ctx.clearRect(0,0,w,h);
-  // Zero line
-  const zeroY = h/2;
-  ctx.strokeStyle = "#1a2e42"; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(10,zeroY); ctx.lineTo(w-10,zeroY); ctx.stroke();
-  data.forEach((d,i) => {
-    const x = 10 + i * ((w-20)/data.length);
-    const barH = (Math.abs(d.val)/maxAbs) * (h/2 - 16);
-    const y = d.val >= 0 ? zeroY - barH : zeroY;
-    ctx.fillStyle = d.val >= 0 ? "#00FF8880" : "#FF445580";
-    ctx.beginPath();
-    ctx.roundRect ? ctx.roundRect(x,y,barW,barH,[3,3,0,0]) : ctx.rect(x,y,barW,barH);
-    ctx.fill();
-    // Label
-    ctx.fillStyle = "#2a4060"; ctx.font = "8px monospace"; ctx.textAlign = "center";
-    ctx.fillText(d.sym, x + barW/2, h - 2);
-    // Value
-    ctx.fillStyle = d.val >= 0 ? "#00FF8888" : "#FF445588"; ctx.font = "7px monospace";
-    const valY = d.val >= 0 ? y - 3 : y + barH + 9;
-    ctx.fillText((d.val>=0?"+":"")+d.val.toFixed(1)+"%", x+barW/2, valY);
+  const zY=h/2;ctx.strokeStyle="#1a2e42";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(10,zY);ctx.lineTo(w-10,zY);ctx.stroke();
+  data.forEach((d,i)=>{
+    const x=10+i*((w-20)/data.length),bh=(Math.abs(d.v)/mA)*(h/2-16),y=d.v>=0?zY-bh:zY;
+    ctx.fillStyle=d.v>=0?"#00FF8880":"#FF445580";
+    ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,bw,bh,[3,3,0,0]):ctx.rect(x,y,bw,bh);ctx.fill();
+    ctx.fillStyle="#2a4060";ctx.font="8px monospace";ctx.textAlign="center";ctx.fillText(d.s,x+bw/2,h-2);
+    ctx.fillStyle=d.v>=0?"#00FF8888":"#FF445588";ctx.font="7px monospace";
+    ctx.fillText((d.v>=0?"+":"")+d.v.toFixed(1)+"%",x+bw/2,d.v>=0?y-3:y+bh+9);
   });
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER MARKET STATS
-// ══════════════════════════════════════════════════
-function renderMarketStats() {
-  const p = prices[selectedCoin]||{};
-  const v = fg.value;
-  const fgColor = v<25?"#FF4455":v<45?"#FF8800":v>75?"#FF4455":v>55?"#00FF88":"#FFB800";
-  document.getElementById("market-stats-grid").innerHTML = `
-    <div class="card-dark">
-      <div class="label">FEAR & GREED</div>
-      <div class="value" style="color:${fgColor}">${fg.value} — ${fg.classification}</div>
-    </div>
-    <div class="card-dark">
-      <div class="label">VOL 24H ${selectedCoin}</div>
-      <div class="value gray">${fmtB(p.vol24h)}</div>
-    </div>
-    <div class="card-dark">
-      <div class="label">MARKET CAP ${selectedCoin}</div>
-      <div class="value gray">${fmtB(p.mcap)}</div>
-    </div>`;
+// ── MARKET GRID ───────────────────────────────────
+function RMG(){
+  const p=P[SC]||{},v=fg.value,fc=v<25?"#FF4455":v<45?"#FF8800":v>75?"#FF4455":v>55?"#00FF88":"#FFB800";
+  document.getElementById("mg").innerHTML=[
+    ["Fear & Greed",`<span style="color:${fc}">${fg.value}</span> <span style="font-size:9px;color:#4a6060">${fg.classification}</span>`],
+    ["Vol 24h "+SC,`<span class="gray">${fB(p.vol)}</span>`],
+    ["MCap "+SC,`<span class="gray">${fB(p.mc)}</span>`],
+  ].map(([k,v])=>`<div class="cdark"><div class="lbl">${k}</div><div style="font-size:11px">${v}</div></div>`).join("");
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER NEWS SIDEBAR
-// ══════════════════════════════════════════════════
-function renderNewsSidebar() {
-  const filtered = newsFilter==="ALL" ? allNews : allNews.filter(n=>n.coin===newsFilter||n.coin==="ALL");
-  const el = document.getElementById("news-sidebar");
-  if (allNews.length === 0) { el.innerHTML = `<div style="padding:20px;text-align:center;color:#2a4060;font-size:10px"><span class="spinner">⟳</span></div>`; return; }
-  el.innerHTML = filtered.slice(0,25).map(n => {
-    const impactColor = n.impact > 0 ? "#00FF88" : "#FF4455";
-    const coinColor = COIN_COLORS[n.coin] || "#8899AA";
-    return `<div class="news-item${n.isBreaking?" news-breaking":""}" onclick="window.open('${n.url}','_blank')">
-      ${n.isBreaking?`<div style="font-size:8px;color:#FF4455;font-weight:700;margin-bottom:2px;letter-spacing:1px">⚡ BREAKING</div>`:""}
-      <div style="font-size:10px;color:${n.isBreaking?"#FFAAAA":"#9aaabb"};line-height:1.4">${n.title}</div>
+// ── NEWS SIDEBAR ──────────────────────────────────
+function RNS(){
+  const f=NF==="ALL"?AN:AN.filter(n=>n.coin===NF||n.coin==="ALL");
+  const e=document.getElementById("nsb");
+  if(!AN.length){e.innerHTML=`<div style="padding:20px;text-align:center;color:#2a4060"><span class="sp">⟳</span></div>`;return;}
+  e.innerHTML=f.slice(0,25).map(n=>`
+    <div class="ni${n.brk?" nb":""}" onclick="window.open('${n.url}','_blank')">
+      ${n.brk?`<div style="font-size:8px;color:#FF4455;font-weight:700;margin-bottom:2px;letter-spacing:1px">⚡ BREAKING</div>`:""}
+      <div style="font-size:10px;color:${n.brk?"#FFAAAA":"#9aaabb"};line-height:1.4">${n.title}</div>
       <div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;align-items:center">
         <span style="font-size:8px;color:#2a3a50">${n.source}</span>
         <span style="font-size:8px;color:#1a2e42">${n.time}</span>
-        ${tag(n.impact>0?"+"+n.impact:n.impact, impactColor, impactColor+"15")}
+        ${tg((n.imp>0?"+":"")+n.imp,n.imp>0?"#00FF88":"#FF4455",(n.imp>0?"#00FF88":"#FF4455")+"15")}
       </div>
+    </div>`).join("");
+}
+
+// ── SINAIS ────────────────────────────────────────
+function RSG(){
+  if(!BON){document.getElementById("sof").style.display="block";document.getElementById("son").style.display="none";return;}
+  document.getElementById("sof").style.display="none";document.getElementById("son").style.display="block";
+  const sigs=Object.values(BS),ls=sigs.filter(s=>s.signal==="LONG"),ss=sigs.filter(s=>s.signal==="SHORT");
+  document.getElementById("sstats").innerHTML=[
+    ["LONGs",ls.length,"#00FF88"],["SHORTs",ss.length,"#FF4455"],
+    ["Neutros",sigs.filter(s=>!s.signal||s.signal==="NEUTRAL").length,"#8899AA"],
+    ["Ciclo",BH?.cycle||"—","#00AAFF"],
+  ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:22px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
+  document.getElementById("stbl").innerHTML=SYM.map(sym=>{
+    const b=BS[sym]||{},p=P[sym]||{},c=CLR[sym],hs=b.signal&&b.signal!=="NEUTRAL";
+    return `<div class="tr" style="grid-template-columns:60px 68px 58px 90px 90px 90px 52px 52px 1fr;gap:6px;background:${b.signal==="LONG"?"#00FF8806":b.signal==="SHORT"?"#FF445506":"transparent"}">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:6px;height:6px;border-radius:50%;background:${c}"></div><span style="font-weight:700;color:#D0E0F0">${sym}</span></div>
+      ${tg(b.signal||"—",sC(b.signal||"NEUTRAL"),sBg(b.signal||"NEUTRAL"))}
+      <div><span style="color:${sC(b.signal||"NEUTRAL")};font-weight:700">${(b.confidence||0).toFixed(0)}%</span><div style="height:2px;background:#0a1828;border-radius:1px;margin-top:2px"><div style="height:100%;width:${b.confidence||0}%;background:${sC(b.signal||"NEUTRAL")};border-radius:1px"></div></div></div>
+      <span class="gray">${hs?fP(b.entry):"—"}</span>
+      <span class="red">${hs?fP(b.stop_loss):"—"}</span>
+      <span class="green">${hs?fP(b.tp1):"—"}</span>
+      <span class="yel">${b.rr_ratio>0?"1:"+b.rr_ratio:"—"}</span>
+      <span class="gray">${b.strategy_count||0}✓</span>
+      <span style="font-size:8px;color:#4a6080">${(b.reasons||[]).slice(0,2).join(", ")||"—"}</span>
     </div>`;
   }).join("");
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER FULL NEWS PAGE
-// ══════════════════════════════════════════════════
-function renderNewsStats() {
-  document.getElementById("news-stats").innerHTML = [
-    [`F&G: ${fg.value}`, fg.classification, fg.value<40?"#FF4455":fg.value>60?"#00FF88":"#FFB800"],
-    ["Breaking", allNews.filter(n=>n.isBreaking).length+" alertas", "#FF4455"],
-    ["Bullish", allNews.filter(n=>n.impact>=4).length+" notícias", "#00FF88"],
-    ["Bearish", allNews.filter(n=>n.impact<=-4).length+" notícias", "#FF4455"],
-  ].map(([k,v,c])=>`<div class="card"><div class="label">${k}</div><div class="value" style="font-size:14px;color:${c}">${v}</div></div>`).join("");
+// ── POSIÇÕES ──────────────────────────────────────
+function RPS(){
+  const bl=BM?.balance||10000;
+  document.getElementById("pstats").innerHTML=[
+    ["Saldo Paper","$"+bl.toLocaleString("en",{maximumFractionDigits:2}),"#00FF88"],
+    ["Posições Abertas",BP.length,"#00AAFF"],
+    ["Modo",(BM?.mode||"dry").toUpperCase(),"#FFB800"],
+  ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:18px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
+  const e=document.getElementById("pcnt");
+  if(!BON){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;font-size:11px">Bot offline — sem dados de posições.</div>`;return;}
+  if(!BP.length){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;line-height:2;font-size:11px"><div style="font-size:36px;margin-bottom:12px">📊</div>Nenhuma posição aberta.<br>Bot abre quando 2+ estratégias concordam com confiança ≥65%.</div>`;return;}
+  e.innerHTML=`<div class="card" style="overflow:hidden"><div class="tr th" style="grid-template-columns:60px 65px 90px 90px 90px 1fr;gap:8px"><span>Ativo</span><span>Lado</span><span>Entrada</span><span>Stop</span><span>TP1</span><span>Abertura</span></div>
+  ${BP.map(p=>`<div class="tr" style="grid-template-columns:60px 65px 90px 90px 90px 1fr;gap:8px">
+    <span style="font-weight:700;color:#D0E0F0">${p.symbol?.replace("/USDT","")}</span>
+    ${tg(p.side==="Buy"?"LONG":"SHORT",sC(p.side==="Buy"?"LONG":"SHORT"))}
+    <span class="gray">${fP(p.entry)}</span><span class="red">${fP(p.stop_loss)}</span><span class="green">${fP(p.tp1)}</span>
+    <span style="font-size:8px;color:#2a4060">${p.opened_at||"—"}</span>
+  </div>`).join("")}</div>`;
 }
 
-function renderFullNews() {
-  const filtered = newsFilter2==="ALL" ? allNews : allNews.filter(n=>n.coin===newsFilter2||n.coin==="ALL");
-  document.getElementById("news-count-label").textContent = (allNews.length||0) + " NOTÍCIAS AO VIVO — CryptoCompare";
-  document.getElementById("news-full").innerHTML = filtered.map(n=>{
-    const ic = n.impact>0?"#00FF88":"#FF4455";
-    const coinColor = COIN_COLORS[n.coin]||"#8899AA";
-    return `<div class="news-item${n.isBreaking?" news-breaking":""}" onclick="window.open('${n.url}','_blank')">
-      ${n.isBreaking?`<span style="font-size:8px;color:#FF4455;font-weight:700;letter-spacing:1px">⚡ BREAKING </span>`:""}
-      <div style="font-size:11px;color:${n.isBreaking?"#FFAAAA":"#C0D0E0"};line-height:1.4;margin-bottom:5px">${n.title}</div>
+// ── FULL NEWS ─────────────────────────────────────
+function RFN(){
+  const v=fg.value,fc=v<40?"#FF4455":v>60?"#00FF88":"#FFB800";
+  document.getElementById("nstats").innerHTML=[
+    [`F&G: ${fg.value}`,fg.classification,fc],["Breaking",AN.filter(n=>n.brk).length+" alertas","#FF4455"],
+    ["Bullish",AN.filter(n=>n.imp>=4).length+" notícias","#00FF88"],["Bearish",AN.filter(n=>n.imp<=-4).length+" notícias","#FF4455"],
+  ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:14px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
+  const f=NF2==="ALL"?AN:AN.filter(n=>n.coin===NF2||n.coin==="ALL");
+  document.getElementById("nlbl").textContent=(AN.length||0)+" NOTÍCIAS AO VIVO — CryptoCompare";
+  document.getElementById("nfl").innerHTML=f.map(n=>`
+    <div class="ni${n.brk?" nb":""}" onclick="window.open('${n.url}','_blank')">
+      ${n.brk?`<span style="font-size:8px;color:#FF4455;font-weight:700;letter-spacing:1px">⚡ BREAKING </span>`:""}
+      <div style="font-size:11px;color:${n.brk?"#FFAAAA":"#C0D0E0"};line-height:1.4;margin-bottom:5px">${n.title}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <span style="font-size:9px;color:#3a5070">${n.source}</span>
         <span style="font-size:9px;color:#1a2e42">${n.time}</span>
-        ${tag(n.coin, coinColor)}
-        ${tag((n.impact>0?"+":"")+n.impact, ic, ic+"15")}
-        ${tag(n.category,"#4a6080")}
-        <span style="font-size:8px;color:#00AAFF66">↗ ler artigo</span>
+        ${tg(n.coin,CLR[n.coin]||"#8899AA")}
+        ${tg((n.imp>0?"+":"")+n.imp,n.imp>0?"#00FF88":"#FF4455",(n.imp>0?"#00FF88":"#FF4455")+"15")}
+        ${tg(n.cat,"#4a6080")}
+        <span style="font-size:8px;color:#00AAFF55">↗ ler</span>
       </div>
-    </div>`;
+    </div>`).join("");
+}
+
+// ── TRADES ────────────────────────────────────────
+function RTR(){
+  const st=BT.stats||{};
+  document.getElementById("tstats").innerHTML=[
+    ["P&L Total","$"+(st.total_pnl||0).toFixed(2),(st.total_pnl||0)>=0?"#00FF88":"#FF4455"],
+    ["Win Rate",(st.win_rate||0).toFixed(1)+"%","#00AAFF"],
+    ["Wins / Losses",(st.wins||0)+" / "+(st.losses||0),"#FFB800"],
+    ["Avg Win","$"+(st.avg_win||0).toFixed(2),"#00FF88"],
+  ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:16px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
+  const tr=BT.trades||[],e=document.getElementById("tcnt");
+  if(!tr.length){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;font-size:11px">${BON?"Nenhum trade fechado ainda.":"Bot offline."}</div>`;return;}
+  e.innerHTML=`<div class="card" style="overflow:hidden"><div class="tr th" style="grid-template-columns:60px 65px 90px 90px 80px 65px 1fr;gap:8px"><span>Ativo</span><span>Lado</span><span>Entrada</span><span>Saída</span><span>P&L</span><span>%</span><span>Data</span></div>
+  ${tr.map(t=>`<div class="tr" style="grid-template-columns:60px 65px 90px 90px 80px 65px 1fr;gap:8px;background:${(t.pnl||0)>=0?"#00FF8805":"#FF445505"}">
+    <span style="font-weight:700;color:#D0E0F0">${t.symbol?.replace("/USDT","")}</span>
+    ${tg(t.side==="Buy"?"LONG":"SHORT",sC(t.side==="Buy"?"LONG":"SHORT"))}
+    <span class="gray">${fP(t.entry)}</span><span class="gray">${fP(t.exit_price)}</span>
+    <span style="color:${gc(t.pnl||0)};font-weight:700">$${(t.pnl||0).toFixed(2)}</span>
+    <span style="color:${gc(t.pnl_pct||0)}">${pc(t.pnl_pct||0)}</span>
+    <span style="font-size:8px;color:#2a4060">${t.closed_at||"—"}</span>
+  </div>`).join("")}</div>`;
+}
+
+// ── LOGS ──────────────────────────────────────────
+function RLG(){
+  document.getElementById("lst").textContent=BON?"LIVE · atualiza a cada 15s":"Bot offline";
+  const e=document.getElementById("lcnt");
+  if(!BL.length){e.innerHTML=`<div style="text-align:center;padding:30px;color:#2a4060">${BON?"Aguardando eventos...":"Bot offline."}</div>`;return;}
+  e.innerHTML=BL.map(l=>`<div style="font-family:monospace;font-size:10px;padding:3px 0;border-bottom:1px solid #071422;color:${l.type==="BUY"?"#00FF88":l.type==="SELL"?"#FF4455":l.type==="ERROR"?"#FF8800":"#2a4060"}">
+    <span style="color:#1a2e42;margin-right:8px">${l.time}</span><span style="margin-right:8px;font-weight:700">[${l.type}]</span>${l.msg}
+  </div>`).join("");
+}
+
+// ── TICKER ────────────────────────────────────────
+function RTK(){
+  if(!Object.keys(P).length)return;
+  document.getElementById("tki").innerHTML=[...SYM,...SYM].map(s=>{
+    const p=P[s]||{},b=BS[s]||{},chg=p.c24||0;
+    return `<span style="font-size:10px;font-family:monospace;color:${gc(chg)}"><span style="color:#2a4060;margin-right:4px">${s}</span>${p.price?fP(p.price):"—"}<span style="margin-left:4px">${chg>=0?"▲":"▼"}${Math.abs(chg).toFixed(2)}%</span>${b.signal&&b.signal!=="NEUTRAL"?`<span style="margin-left:4px;color:${sC(b.signal)};font-size:8px">◆${b.signal}</span>`:""}</span>`;
   }).join("");
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER PRICE TABLE
-// ══════════════════════════════════════════════════
-function renderPriceTable() {
-  document.getElementById("price-table").innerHTML = SYMBOLS.map((sym,i)=>{
-    const p = prices[sym]||{};
-    const c = COIN_COLORS[sym];
-    return `<div class="table-row" onclick="selectCoin('${sym}');showTab('dashboard')"
-      style="grid-template-columns:35px 110px 110px 75px 75px 75px 90px 90px 80px;gap:8px;cursor:pointer;background:${selectedCoin===sym?"#0a1e3522":"transparent"}">
+// ── PRICE TABLE ───────────────────────────────────
+function RPT(){
+  document.getElementById("ptbl").innerHTML=SYM.map((s,i)=>{
+    const p=P[s]||{},c=CLR[s];
+    return `<div class="tr" style="grid-template-columns:30px 100px 110px 70px 75px 75px 90px 90px 75px;gap:8px;cursor:pointer;background:${SC===s?"#0a1e3522":"transparent"}" onclick="SC='${s}';ST('dash');RA()">
       <span style="color:#1a2e42">${i+1}</span>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="width:8px;height:8px;border-radius:50%;background:${c}"></div>
-        <span style="font-weight:700;color:#D0E0F0">${sym}</span>
-      </div>
-      <span style="font-weight:700;color:#E8F4FF;font-family:monospace">${p.price?fmtP(p.price):"<span class='spinner'>⟳</span>"}</span>
-      <span style="color:${pctColor(p.change1h||0)}">${pct(p.change1h||0)}</span>
-      <span style="color:${pctColor(p.change24h||0)};font-weight:700">${pct(p.change24h||0)}</span>
-      <span style="color:${pctColor(p.change7d||0)}">${pct(p.change7d||0)}</span>
-      <span style="color:#8899AA;font-family:monospace">${fmtB(p.vol24h)}</span>
-      <span style="color:#8899AA;font-family:monospace">${fmtB(p.mcap)}</span>
-      <span style="color:#FF4455;font-size:9px">${p.athChange?(p.athChange.toFixed(1)+"%"):"—"}</span>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:${c}"></div><span style="font-weight:700;color:#D0E0F0">${s}</span></div>
+      <span style="font-weight:700;color:#E8F4FF;font-family:monospace">${p.price?fP(p.price):"—"}</span>
+      <span style="color:${gc(p.c1||0)}">${pc(p.c1||0)}</span>
+      <span style="color:${gc(p.c24||0)};font-weight:700">${pc(p.c24||0)}</span>
+      <span style="color:${gc(p.c7||0)}">${pc(p.c7||0)}</span>
+      <span class="gray" style="font-family:monospace">${fB(p.vol)}</span>
+      <span class="gray" style="font-family:monospace">${fB(p.mc)}</span>
+      <span class="red" style="font-size:9px">${p.athC?p.athC.toFixed(1)+"%":"—"}</span>
     </div>`;
   }).join("");
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER SIGNALS TABLE
-// ══════════════════════════════════════════════════
-function renderSignalsTable() {
-  document.getElementById("signals-table").innerHTML = SYMBOLS.map(sym=>{
-    const p = prices[sym]||{};
-    const c = COIN_COLORS[sym];
-    return `<div class="table-row" style="grid-template-columns:60px 80px 80px 80px 80px 80px 1fr;gap:8px">
-      <div style="display:flex;align-items:center;gap:5px">
-        <div style="width:6px;height:6px;border-radius:50%;background:${c}"></div>
-        <span style="font-weight:700;color:#D0E0F0">${sym}</span>
-      </div>
-      <span style="color:#E8F4FF;font-weight:700">${p.price?fmtP(p.price):"—"}</span>
-      <span style="color:${pctColor(p.change1h||0)}">${pct(p.change1h||0)}</span>
-      <span style="color:${pctColor(p.change24h||0)};font-weight:700">${pct(p.change24h||0)}</span>
-      <span style="color:#8899AA">${fmtB(p.vol24h)}</span>
-      <span style="color:#8899AA">${fmtB(p.mcap)}</span>
-      <span style="color:#FF4455;font-size:9px">${p.athChange?(p.athChange.toFixed(1)+"% do ATH"):"—"}</span>
-    </div>`;
-  }).join("");
-}
+// ── NEWS FILTERS ──────────────────────────────────
+function SNF(f){NF=f;document.querySelectorAll(".nfb").forEach(b=>{const a=b.dataset.f===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RNS();}
+function SNF2(f){NF2=f;document.querySelectorAll(".nf2").forEach(b=>{const a=b.textContent.trim()===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RFN();}
 
-// ══════════════════════════════════════════════════
-//  TICKER
-// ══════════════════════════════════════════════════
-function renderTicker() {
-  if (Object.keys(prices).length === 0) return;
-  const items = [...SYMBOLS,...SYMBOLS].map(sym=>{
-    const p = prices[sym]||{};
-    const chg = p.change24h||0;
-    const color = chg>=0?"#00FF88":"#FF4455";
-    return `<span style="font-size:10px;font-family:monospace;color:${color}">
-      <span style="color:#2a4060;margin-right:4px">${sym}</span>${p.price?fmtP(p.price):"—"}
-      <span style="margin-left:4px">${chg>=0?"▲":"▼"}${Math.abs(chg).toFixed(2)}%</span>
-    </span>`;
-  }).join("");
-  document.getElementById("ticker-inner").innerHTML = items;
-}
+// ── RENDER ALL ────────────────────────────────────
+function RA(){RCL();RMC();RBC();RMG();RNS();RTK();RPT();}
 
-// ══════════════════════════════════════════════════
-//  SELECT COIN
-// ══════════════════════════════════════════════════
-function selectCoin(sym) {
-  selectedCoin = sym;
-  renderAll();
-}
-
-// ══════════════════════════════════════════════════
-//  NEWS FILTER
-// ══════════════════════════════════════════════════
-function setNewsFilter(f) {
-  newsFilter = f;
-  document.querySelectorAll(".nf-btn").forEach(b => {
-    const isActive = b.dataset.f === f;
-    b.style.background = isActive?"#00FF8818":"none";
-    b.style.borderColor = isActive?"#00FF8844":"#071422";
-    b.style.color = isActive?"#00FF88":"#2a4060";
-  });
-  renderNewsSidebar();
-}
-function setNewsFilter2(f) {
-  newsFilter2 = f;
-  document.querySelectorAll(".nf2-btn").forEach(b => {
-    const isActive = b.textContent.trim() === f;
-    b.style.background = isActive?"#00FF8818":"none";
-    b.style.borderColor = isActive?"#00FF8844":"#071422";
-    b.style.color = isActive?"#00FF88":"#2a4060";
-  });
-  renderFullNews();
-}
-
-// ══════════════════════════════════════════════════
-//  RENDER ALL
-// ══════════════════════════════════════════════════
-function renderAll() {
-  renderCoinList();
-  renderMainCard();
-  renderBarChart();
-  renderMarketStats();
-  renderTicker();
-  renderPriceTable();
-  renderSignalsTable();
-}
-
-// ══════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════
-fetchPrices();
-fetchFG();
-fetchNews();
-setInterval(fetchPrices, 30000);
-setInterval(fetchFG, 300000);
-setInterval(fetchNews, 120000);
-window.addEventListener("resize", () => { renderBarChart(); });
+// ── INIT ─────────────────────────────────────────
+FP();FFG();FN();FB();
+setInterval(FP,30000);setInterval(FFG,300000);setInterval(FN,120000);setInterval(FB,15000);
+setInterval(()=>{document.getElementById("ftm").textContent=new Date().toLocaleTimeString("pt-BR");},1000);
+window.addEventListener("resize",RBC);
 </script>
 </body>
 </html>
