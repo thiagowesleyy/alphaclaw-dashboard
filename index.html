@@ -317,7 +317,7 @@ async function FB(){
     const ls=Object.values(BS).filter(s=>s.signal==="LONG").length,ss=Object.values(BS).filter(s=>s.signal==="SHORT").length;
     const bs=document.getElementById("bsg");if(ls+ss>0){bs.style.display="inline";bs.textContent=ls+"L "+ss+"S";}
     const bp=document.getElementById("bpg");if(BP.length>0){bp.style.display="inline";bp.textContent=BP.length;}
-    RMC();RCL();
+    RMC();RCL();RDashExtras();
   }catch(e){BON=false;setST("stb",false,"BOT OFFLINE");DL("❌ Erro: "+e.message);}
 }
 
@@ -468,6 +468,7 @@ function RSG(){
 }
 
 // ── POSIÇÕES ──────────────────────────────────────
+// ── POSIÇÕES COM P&L AO VIVO ──────────────────────────────────────
 function RPS(){
   const bl=BM?.balance||10000;
   document.getElementById("pstats").innerHTML=[
@@ -475,16 +476,31 @@ function RPS(){
     ["Posições Abertas",BP.length,"#00AAFF"],
     ["Modo",(BM?.mode||"dry").toUpperCase(),"#FFB800"],
   ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:18px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
+  
   const e=document.getElementById("pcnt");
   if(!BON){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;font-size:11px">Bot offline — sem dados de posições.</div>`;return;}
-  if(!BP.length){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;line-height:2;font-size:11px"><div style="font-size:36px;margin-bottom:12px">📊</div>Nenhuma posição aberta.<br>Bot abre quando 2+ estratégias concordam com confiança ≥65%.</div>`;return;}
-  e.innerHTML=`<div class="card" style="overflow:hidden"><div class="tr th" style="grid-template-columns:60px 65px 90px 90px 90px 1fr;gap:8px"><span>Ativo</span><span>Lado</span><span>Entrada</span><span>Stop</span><span>TP1</span><span>Abertura</span></div>
-  ${BP.map(p=>`<div class="tr" style="grid-template-columns:60px 65px 90px 90px 90px 1fr;gap:8px">
-    <span style="font-weight:700;color:#D0E0F0">${p.symbol?.replace("/USDT","")}</span>
-    ${tg(p.side==="Buy"?"LONG":"SHORT",sC(p.side==="Buy"?"LONG":"SHORT"))}
-    <span class="gray">${fP(p.entry)}</span><span class="red">${fP(p.stop_loss)}</span><span class="green">${fP(p.tp1)}</span>
-    <span style="font-size:8px;color:#2a4060">${p.opened_at||"—"}</span>
-  </div>`).join("")}</div>`;
+  if(!BP.length){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;line-height:2;font-size:11px"><div style="font-size:36px;margin-bottom:12px">📊</div>Nenhuma posição aberta no momento.</div>`;return;}
+
+  e.innerHTML=`<div class="card" style="overflow:hidden"><div class="tr th" style="grid-template-columns:60px 60px 80px 80px 70px 60px 80px 1fr;gap:8px"><span>Ativo</span><span>Lado</span><span>Entrada</span><span>Atual</span><span>P&L ($)</span><span>Live %</span><span>TP1</span><span>Abertura</span></div>
+  ${BP.map(p=>{
+    const sym = p.symbol?.replace("/USDT","");
+    const cp = P[sym]?.price || p.entry; // Preço ao vivo
+    const isLong = p.side==="Buy" || p.side==="LONG";
+    // Cálculo do Percentual ao Vivo
+    const pnl_pct = isLong ? ((cp - p.entry)/p.entry)*100 : ((p.entry - cp)/p.entry)*100;
+    const pnl_usd = (p.size||(100/p.entry)) * p.entry * (pnl_pct/100); 
+
+    return `<div class="tr" style="grid-template-columns:60px 60px 80px 80px 70px 60px 80px 1fr;gap:8px;background:${pnl_pct>=0?"#00FF880A":"#FF44550A"}">
+      <span style="font-weight:700;color:#D0E0F0">${sym}</span>
+      ${tg(isLong?"LONG":"SHORT",sC(isLong?"LONG":"SHORT"))}
+      <span class="gray">${fP(p.entry)}</span>
+      <span style="color:#E8F4FF">${fP(cp)}</span>
+      <span style="color:${gc(pnl_usd)};font-weight:700">$${pnl_usd.toFixed(2)}</span>
+      <span style="color:${gc(pnl_pct)};font-weight:700">${pc(pnl_pct)}</span>
+      <span class="green">${fP(p.tp1)}</span>
+      <span style="font-size:8px;color:#2a4060">${p.opened_at||"—"}</span>
+    </div>`
+  }).join("")}</div>`;
 }
 
 // ── FULL NEWS ─────────────────────────────────────
@@ -573,9 +589,50 @@ function RPT(){
 // ── NEWS FILTERS ──────────────────────────────────
 function SNF(f){NF=f;document.querySelectorAll(".nfb").forEach(b=>{const a=b.dataset.f===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RNS();}
 function SNF2(f){NF2=f;document.querySelectorAll(".nf2").forEach(b=>{const a=b.textContent.trim()===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RFN();}
+// ── RESUMO NO DASHBOARD PRINCIPAL ─────────────────────────────────
+function RDashExtras() {
+  // 1. Painel de Posições Ao Vivo
+  const dp = document.getElementById("dash-pos");
+  if(BP && BP.length > 0) {
+    dp.style.display = "block";
+    dp.innerHTML = `<div class="card"><div class="lbl" style="margin-bottom:10px;color:#00AAFF">⚡ POSIÇÕES AO VIVO</div>
+    <div style="display:grid;gap:6px">
+    ${BP.map(p=>{
+       const sym = p.symbol?.replace("/USDT","");
+       const cp = P[sym]?.price || p.entry;
+       const isLong = p.side==="Buy" || p.side==="LONG";
+       const pnl_pct = isLong ? ((cp - p.entry)/p.entry)*100 : ((p.entry - cp)/p.entry)*100;
+       return `<div style="display:flex;justify-content:space-between;background:#020c18;padding:8px 12px;border-radius:6px;border:1px solid ${pnl_pct>=0?'#00FF8833':'#FF445533'}">
+          <div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700;color:#D0E0F0">${sym}</span>${tg(isLong?"LONG":"SHORT",sC(isLong?"LONG":"SHORT"))}</div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <span style="font-size:10px;color:#8899AA">Entrada: ${fP(p.entry)}</span>
+            <span style="font-size:12px;font-weight:700;color:${gc(pnl_pct)}">${pnl_pct>=0?'🚀':'🔻'} ${pc(pnl_pct)}</span>
+          </div>
+       </div>`;
+    }).join("")}</div></div>`;
+  } else { dp.style.display = "none"; }
 
+  // 2. Painel de Trades Encerrados (Últimos 3)
+  const dt = document.getElementById("dash-trades");
+  if(BT && BT.trades && BT.trades.length > 0) {
+    dt.style.display = "block";
+    dt.innerHTML = `<div class="card"><div class="lbl" style="margin-bottom:10px;color:#FFB800">🏆 ÚLTIMOS TRADES ENCERRADOS</div>
+    <div style="display:grid;gap:6px">
+    ${BT.trades.slice(0, 3).map(t=>{
+       const sym = t.symbol?.replace("/USDT","");
+       const isLong = t.side==="Buy" || t.side==="LONG";
+       return `<div style="display:flex;justify-content:space-between;background:#020c18;padding:8px 12px;border-radius:6px;border:1px solid #071422">
+          <div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700;color:#D0E0F0">${sym}</span>${tg(isLong?"LONG":"SHORT",sC(isLong?"LONG":"SHORT"), (t.pnl>=0?"#00FF8815":"#FF445515"))}</div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <span style="font-size:10px;color:#8899AA">Saída: ${fP(t.exit_price)}</span>
+            <span style="font-size:12px;font-weight:700;color:${gc(t.pnl)}">${t.pnl>=0?'+':''}$${(t.pnl||0).toFixed(2)} (${pc(t.pnl_pct||0)})</span>
+          </div>
+       </div>`;
+    }).join("")}</div></div>`;
+  } else { dt.style.display = "none"; }
+}
 // ── RENDER ALL ────────────────────────────────────
-function RA(){RCL();RMC();RBC();RMG();RNS();RTK();RPT();}
+function RA(){RCL();RMC();RBC();RMG();RNS();RTK();RPT();RDashExtras();}
 
 // ── INIT ─────────────────────────────────────────
 FP();FFG();FN();FB();
