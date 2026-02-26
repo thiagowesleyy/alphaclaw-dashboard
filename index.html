@@ -60,7 +60,14 @@ button:hover{opacity:.8}
     <div id="stb" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FF445508;border:1px solid #FF445525;cursor:pointer" onclick="togD()"><div class="dot" style="background:#FF4455"></div><span style="font-size:8px;color:#FF4455">BOT OFFLINE</span></div>
     <div id="rgb" style="text-align:center;padding:4px 10px;border-radius:5px;background:#8899AA15;border:1px solid #8899AA33"><div class="lbl">REGIME</div><div id="rgv" style="font-size:10px;font-weight:700;color:#8899AA">NEUTRAL</div></div>
     <div style="text-align:center"><div class="lbl">FEAR&GREED</div><div id="fgv" style="font-size:13px;font-weight:700;color:#FFB800">50</div></div>
+    
     <div style="text-align:center"><div class="lbl">PAPER</div><div id="blv" style="font-size:12px;font-weight:700;color:#00FF88">$10,000</div></div>
+    
+    <div id="live-pnl-box" style="text-align:center;padding:4px 12px;border-radius:5px;background:#FFB80015;border:1px solid #FFB800;box-shadow: 0 0 10px #FFB80040;transition:all 0.3s">
+      <div class="lbl" id="live-pnl-lbl" style="color:#FFB800;font-weight:700;letter-spacing:1px">LUCRO AO VIVO</div>
+      <div id="live-pnl-val" style="font-size:14px;font-weight:700;color:#FFB800">$0.00 <span style="font-size:10px">(0.00%)</span></div>
+    </div>
+
     <div style="text-align:center"><div class="lbl">CICLO</div><div id="cyv" style="font-size:11px;color:#2a4060">—</div></div>
   </div>
 </div>
@@ -307,7 +314,7 @@ async function FB(){
     const ls=Object.values(BS).filter(s=>s.signal==="LONG").length,ss=Object.values(BS).filter(s=>s.signal==="SHORT").length;
     const bs=document.getElementById("bsg");if(ls+ss>0){bs.style.display="inline";bs.textContent=ls+"L "+ss+"S";}
     const bp=document.getElementById("bpg");if(BP.length>0){bp.style.display="inline";bp.textContent=BP.length;}
-    RMC();RCL();RDashExtras();
+    RMC();RCL();RDashExtras();RLivePnL();
   }catch(e){BON=false;setST("stb",false,"BOT OFFLINE");DL("❌ Erro: "+e.message);}
 }
 
@@ -583,7 +590,6 @@ function SNF2(f){NF2=f;document.querySelectorAll(".nf2").forEach(b=>{const a=b.t
 
 // ── RESUMO NO DASHBOARD PRINCIPAL ─────────────────────────────────
 function RDashExtras() {
-  // 1. Painel de Posições Ao Vivo
   const dp = document.getElementById("dash-pos");
   if(BP && BP.length > 0) {
     dp.style.display = "block";
@@ -604,7 +610,6 @@ function RDashExtras() {
     }).join("")}</div></div>`;
   } else { dp.style.display = "none"; }
 
-  // 2. Painel de Trades Encerrados (Últimos 3)
   const dt = document.getElementById("dash-trades");
   if(BT && BT.trades && BT.trades.length > 0) {
     dt.style.display = "block";
@@ -623,8 +628,50 @@ function RDashExtras() {
     }).join("")}</div></div>`;
   } else { dt.style.display = "none"; }
 }
+
+// ── P&L AO VIVO GLOBAL NO CABEÇALHO ──────────────────────────────
+function RLivePnL() {
+  const box = document.getElementById("live-pnl-box");
+  const lbl = document.getElementById("live-pnl-lbl");
+  const val = document.getElementById("live-pnl-val");
+  
+  // Se o bot estiver offline ou sem posições abertas, fica amarelo padrão
+  if(!BON || !BP || BP.length === 0) {
+    val.innerHTML = `<span style="color:#FFB800">$0.00 <span style="font-size:10px">(0.00%)</span></span>`;
+    box.style.borderColor = "#FFB800";
+    box.style.background = "#FFB80015";
+    box.style.boxShadow = "0 0 10px #FFB80040";
+    lbl.style.color = "#FFB800";
+    return;
+  }
+  
+  // Calcular o Lucro ou Prejuízo de todas as posições abertas
+  let total_pnl_usd = 0;
+  const balance = BM?.balance || 10000;
+  
+  BP.forEach(p => {
+    const sym = p.symbol?.replace("/USDT","");
+    const cp = P[sym]?.price || p.entry;
+    const isLong = p.side==="Buy" || p.side==="LONG";
+    const pnl_pct = isLong ? ((cp - p.entry)/p.entry)*100 : ((p.entry - cp)/p.entry)*100;
+    const pnl_usd = (p.size||(100/p.entry)) * p.entry * (pnl_pct/100); 
+    total_pnl_usd += pnl_usd;
+  });
+  
+  const total_pnl_pct = (total_pnl_usd / balance) * 100;
+  const c = total_pnl_usd >= 0 ? "#00FF88" : "#FF4455"; // Verde se lucro, Vermelho se prejuízo
+  const s = total_pnl_usd >= 0 ? "+" : "";
+  
+  // Atualizar as cores e os números da caixa no topo
+  val.innerHTML = `<span style="color:${c}">${s}$${Math.abs(total_pnl_usd).toFixed(2)} <span style="font-size:10px">(${s}${total_pnl_pct.toFixed(2)}%)</span></span>`;
+  box.style.borderColor = c;
+  box.style.background = c + "15";
+  box.style.boxShadow = `0 0 12px ${c}40`;
+  lbl.style.color = c;
+}
+
 // ── RENDER ALL ────────────────────────────────────
-function RA(){RCL();RMC();RBC();RMG();RNS();RTK();RPT();RDashExtras();}
+function RA(){RCL();RMC();RBC();RMG();RNS();RTK();RPT();RDashExtras();RLivePnL();}
 
 // ── INIT ─────────────────────────────────────────
 FP();FFG();FN();FB();
