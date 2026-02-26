@@ -91,7 +91,6 @@ button:hover{opacity:.8}
   <button onclick="ST('logs')">Logs do Bot</button>
 </div>
 
-<!-- DASHBOARD -->
 <div id="tab-dash" style="display:block">
   <div id="dg">
     <div id="cl"><div style="font-size:8px;color:#1a2e42;padding:2px 6px 6px;letter-spacing:1px">TOP 10</div><div id="cli"></div></div>
@@ -121,7 +120,6 @@ button:hover{opacity:.8}
   </div>
 </div>
 
-<!-- PREÇOS -->
 <div id="tab-preco" class="tc">
   <div class="card" style="overflow:hidden">
     <div class="tr th" style="grid-template-columns:30px 100px 110px 70px 75px 75px 90px 90px 75px;gap:8px">
@@ -131,7 +129,6 @@ button:hover{opacity:.8}
   </div>
 </div>
 
-<!-- SINAIS -->
 <div id="tab-sinal" class="tc">
   <div id="sof" style="background:#0a0500;border:1px solid #FF880020;border-radius:8px;padding:18px;margin-bottom:14px;text-align:center;color:#FF8800;font-size:11px;line-height:2">
     ⚡ Bot Railway offline<br><span style="font-size:9px;color:#4a3010">Configure o BOT_API neste arquivo com a URL do seu bot Railway</span>
@@ -139,21 +136,16 @@ button:hover{opacity:.8}
   <div id="son" style="display:none">
     <div class="g4" style="margin-bottom:14px" id="sstats"></div>
     <div class="card" style="overflow:hidden">
-      <div class="tr th" style="grid-template-columns:60px 68px 58px 90px 90px 90px 52px 52px 1fr;gap:6px">
-        <span>Ativo</span><span>Sinal</span><span>Conf.</span><span>Entrada</span><span>Stop</span><span>TP1</span><span>R:R</span><span>Strats</span><span>Motivos</span>
-      </div>
       <div id="stbl"></div>
     </div>
   </div>
 </div>
 
-<!-- POSIÇÕES -->
 <div id="tab-posic" class="tc">
   <div class="g3" style="margin-bottom:14px" id="pstats"></div>
   <div id="pcnt"></div>
 </div>
 
-<!-- NOTÍCIAS -->
 <div id="tab-notic" class="tc">
   <div class="g4" style="margin-bottom:14px" id="nstats"></div>
   <div class="card" style="overflow:hidden">
@@ -172,13 +164,11 @@ button:hover{opacity:.8}
   </div>
 </div>
 
-<!-- TRADES -->
 <div id="tab-trade" class="tc">
   <div class="g4" style="margin-bottom:14px" id="tstats"></div>
   <div id="tcnt"></div>
 </div>
 
-<!-- LOGS -->
 <div id="tab-logs" class="tc">
   <div class="card" style="max-height:78vh;overflow-y:auto">
     <div style="font-size:9px;color:#2a4060;margin-bottom:10px;border-bottom:1px solid #071422;padding-bottom:8px;display:flex;justify-content:space-between">
@@ -451,23 +441,24 @@ function RSG(){
     ["Neutros",sigs.filter(s=>!s.signal||s.signal==="NEUTRAL").length,"#8899AA"],
     ["Ciclo",BH?.cycle||"—","#00AAFF"],
   ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:22px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
-  document.getElementById("stbl").innerHTML=SYM.map(sym=>{
+  document.getElementById("stbl").innerHTML=`<div class="tr th" style="grid-template-columns:60px 58px 40px 105px 50px 85px 85px 85px 1fr;gap:6px">
+    <span>Ativo</span><span>Sinal</span><span>TF</span><span>Estratégia</span><span>Conf.</span><span>Entrada</span><span>Stop</span><span>TP1</span><span>Motivos</span>
+  </div>` + SYM.map(sym=>{
     const b=BS[sym]||{},p=P[sym]||{},c=CLR[sym],hs=b.signal&&b.signal!=="NEUTRAL";
-    return `<div class="tr" style="grid-template-columns:60px 68px 58px 90px 90px 90px 52px 52px 1fr;gap:6px;background:${b.signal==="LONG"?"#00FF8806":b.signal==="SHORT"?"#FF445506":"transparent"}">
+    return `<div class="tr" style="grid-template-columns:60px 58px 40px 105px 50px 85px 85px 85px 1fr;gap:6px;background:${b.signal==="LONG"?"#00FF8806":b.signal==="SHORT"?"#FF445506":"transparent"}">
       <div style="display:flex;align-items:center;gap:5px"><div style="width:6px;height:6px;border-radius:50%;background:${c}"></div><span style="font-weight:700;color:#D0E0F0">${sym}</span></div>
       ${tg(b.signal||"—",sC(b.signal||"NEUTRAL"),sBg(b.signal||"NEUTRAL"))}
-      <div><span style="color:${sC(b.signal||"NEUTRAL")};font-weight:700">${(b.confidence||0).toFixed(0)}%</span><div style="height:2px;background:#0a1828;border-radius:1px;margin-top:2px"><div style="height:100%;width:${b.confidence||0}%;background:${sC(b.signal||"NEUTRAL")};border-radius:1px"></div></div></div>
+      <span class="gray" style="font-weight:700">${b.timeframe||"—"}</span>
+      <span class="blue" style="font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.best_strategy||"—"}</span>
+      <span style="color:${sC(b.signal||"NEUTRAL")};font-weight:700">${(b.confidence||0).toFixed(0)}%</span>
       <span class="gray">${hs?fP(b.entry):"—"}</span>
       <span class="red">${hs?fP(b.stop_loss):"—"}</span>
       <span class="green">${hs?fP(b.tp1):"—"}</span>
-      <span class="yel">${b.rr_ratio>0?"1:"+b.rr_ratio:"—"}</span>
-      <span class="gray">${b.strategy_count||0}✓</span>
       <span style="font-size:8px;color:#4a6080">${(b.reasons||[]).slice(0,2).join(", ")||"—"}</span>
     </div>`;
   }).join("");
 }
 
-// ── POSIÇÕES ──────────────────────────────────────
 // ── POSIÇÕES COM P&L AO VIVO ──────────────────────────────────────
 function RPS(){
   const bl=BM?.balance||10000;
@@ -589,6 +580,7 @@ function RPT(){
 // ── NEWS FILTERS ──────────────────────────────────
 function SNF(f){NF=f;document.querySelectorAll(".nfb").forEach(b=>{const a=b.dataset.f===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RNS();}
 function SNF2(f){NF2=f;document.querySelectorAll(".nf2").forEach(b=>{const a=b.textContent.trim()===f;b.style.background=a?"#00FF8818":"none";b.style.borderColor=a?"#00FF8844":"#071422";b.style.color=a?"#00FF88":"#2a4060";});RFN();}
+
 // ── RESUMO NO DASHBOARD PRINCIPAL ─────────────────────────────────
 function RDashExtras() {
   // 1. Painel de Posições Ao Vivo
