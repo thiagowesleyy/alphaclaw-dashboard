@@ -42,6 +42,17 @@ button:hover{opacity:.8}
 .nb{background:#120800!important}
 .tc{display:none;padding:14px;animation:fadeIn .3s ease}
 .tc.act{display:block}
+
+/* OTIMIZAÇÃO PARA SMARTPHONES E TABLETS */
+@media (max-width: 768px) {
+  #dg { display: flex !important; flex-direction: column !important; height: auto !important; overflow: visible !important; }
+  #cl { border-right: none !important; border-bottom: 1px solid #071422 !important; max-height: 250px !important; }
+  #cp { overflow-y: visible !important; }
+  #np { border-left: none !important; border-top: 1px solid #071422 !important; height: 400px !important; }
+  #hdr { flex-direction: column; align-items: flex-start; gap: 12px; }
+  #tabs { padding-bottom: 5px; }
+  .g3, .g4 { grid-template-columns: 1fr 1fr !important; }
+}
 </style>
 </head>
 <body>
@@ -96,6 +107,7 @@ button:hover{opacity:.8}
   <button onclick="ST('notic')">Notícias <span id="bbg" style="display:none;font-size:7px;background:#FF445520;color:#FF4455;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
   <button onclick="ST('trade')">Trades & P&L</button>
   <button onclick="ST('logs')">Logs do Bot</button>
+  <button onclick="ST('sobre')">Sobre</button>
 </div>
 
 <div id="tab-dash" style="display:block">
@@ -185,6 +197,38 @@ button:hover{opacity:.8}
   </div>
 </div>
 
+<div id="tab-sobre" class="tc">
+  <div style="max-width:800px; margin:0 auto; background:#030e1a; border:1px solid #071422; border-radius:8px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.5)">
+    <h1 style="font-size:24px; color:#00FF88; margin-bottom:8px; margin-top:0; letter-spacing:1px">AlphaClaw Quant v3.0</h1>
+    <p style="color:#8899AA; font-size:14px; line-height:1.7; margin-bottom:32px">
+      O AlphaClaw não é um simples robô de retalho. É um <b>Hedge Fund Algorítmico Híbrido</b> desenhado para mesas proprietárias (Prop Desks). 
+      Ele combina estratégias matemáticas institucionais com a validação orgânica de Inteligência Artificial (Modelos LLM OSS de 120B de parâmetros), 
+      garantindo que nunca opera contra o contexto macroeconómico do mercado.
+    </p>
+
+    <h2 style="font-size:13px; color:#E0F0FF; border-bottom:1px solid #071422; padding-bottom:8px; margin-bottom:16px; letter-spacing:2px">⚙️ CAPACIDADES PRINCIPAIS (O MOTOR)</h2>
+    <ul style="color:#B8CCD8; font-size:13px; line-height:2.0; margin-bottom:40px; padding-left:20px">
+      <li><strong style="color:#00AAFF">Matriz Multi-Timeframe (MTF):</strong> Lê o mercado desde os 15 minutos até ao Diário antes de agir.</li>
+      <li><strong style="color:#FF4455">Regime Switcher (ADX):</strong> Se a tendência é forte, desliga as estratégias de reversão para não ser esmagado; se for lateral, desliga os rompimentos.</li>
+      <li><strong style="color:#00FF88">Execução Zero-Fee (Maker/Limit):</strong> Injeta liquidez no Livro de Ofertas com a flag Post-Only, anulando as taxas.</li>
+      <li><strong style="color:#FFB800">Trailing Stop Institucional:</strong> Bloqueia matematicamente 50% do lucro flutuante assim que o alvo inicial é atingido.</li>
+      <li><strong style="color:#9945FF">Gestor de Confluência:</strong> Só atira se várias estratégias matemáticas concordarem em simultâneo.</li>
+    </ul>
+
+    <h2 style="font-size:13px; color:#E0F0FF; border-bottom:1px solid #071422; padding-bottom:8px; margin-bottom:16px; letter-spacing:2px">🚀 ÚLTIMAS ATUALIZAÇÕES</h2>
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="background:#0a1525; padding:16px; border-radius:6px; border-left:4px solid #00FF88">
+        <div style="font-size:12px; color:#00FF88; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v3.0 — AGENTE I.A VALIDATOR (RAG)</div>
+        <div style="font-size:12px; color:#8899AA; line-height:1.6">Integração com OpenRouter (Modelos OSS 70B/120B). A IA analisa o Fear & Greed e notícias globais. Se o cenário for de "Risco Sistémico", ela veta a entrada do bot.</div>
+      </div>
+      <div style="background:#0a1525; padding:16px; border-radius:6px; border-left:4px solid #00AAFF">
+        <div style="font-size:12px; color:#00AAFF; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v2.8 — LIQUIDATION SQUEEZE DETECTOR</div>
+        <div style="font-size:12px; color:#8899AA; line-height:1.6">Nova classe que monitoriza picos anormais de volume para operar contra o desespero de posições liquidadas.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div style="border-top:1px solid #071422;padding:5px 18px;display:flex;justify-content:space-between;font-size:8px;color:#1a2e42">
   <span>AlphaClaw v3 · CoinGecko · CryptoCompare · Alternative.me · Railway Bot</span>
   <span id="ftm"></span>
@@ -231,7 +275,8 @@ function RD(){
   ].map(([ok,l])=>`<div style="font-size:10px;color:${ok?"#00FF88":"#FF4455"};margin-bottom:3px">${ok?"✅":"❌"} ${l}</div>`).join("");
 }
 
-const TABS=["dash","preco","sinal","posic","notic","trade","logs"];
+// ── LISTA DE ABAS ATUALIZADA (ADICIONADO "SOBRE") ──
+const TABS=["dash","preco","sinal","posic","notic","trade","logs","sobre"];
 function ST(n){
   document.getElementById("tab-dash").style.display=n==="dash"?"block":"none";
   TABS.filter(t=>t!=="dash").forEach(t=>{const e=document.getElementById("tab-"+t);if(e){e.classList.toggle("act",t===n);}});
@@ -635,7 +680,6 @@ function RLivePnL() {
   const lbl = document.getElementById("live-pnl-lbl");
   const val = document.getElementById("live-pnl-val");
   
-  // Se o bot estiver offline ou sem posições abertas, fica amarelo padrão
   if(!BON || !BP || BP.length === 0) {
     val.innerHTML = `<span style="color:#FFB800">$0.00 <span style="font-size:10px">(0.00%)</span></span>`;
     box.style.borderColor = "#FFB800";
@@ -645,7 +689,6 @@ function RLivePnL() {
     return;
   }
   
-  // Calcular o Lucro ou Prejuízo de todas as posições abertas
   let total_pnl_usd = 0;
   const balance = BM?.balance || 10000;
   
@@ -659,10 +702,9 @@ function RLivePnL() {
   });
   
   const total_pnl_pct = (total_pnl_usd / balance) * 100;
-  const c = total_pnl_usd >= 0 ? "#00FF88" : "#FF4455"; // Verde se lucro, Vermelho se prejuízo
+  const c = total_pnl_usd >= 0 ? "#00FF88" : "#FF4455";
   const s = total_pnl_usd >= 0 ? "+" : "";
   
-  // Atualizar as cores e os números da caixa no topo
   val.innerHTML = `<span style="color:${c}">${s}$${Math.abs(total_pnl_usd).toFixed(2)} <span style="font-size:10px">(${s}${total_pnl_pct.toFixed(2)}%)</span></span>`;
   box.style.borderColor = c;
   box.style.background = c + "15";
