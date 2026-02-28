@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AlphaClaw v3 — Dashboard</title>
+<title>AlphaClaw Quant v3 — Painel</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;scrollbar-width:thin;scrollbar-color:#1a2e42 #010913}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#1a2e42;border-radius:2px}
@@ -62,7 +62,7 @@ button:hover{opacity:.8}
     <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#00FF88,#00AAFF);display:flex;align-items:center;justify-content:center;font-size:20px">⚡</div>
     <div>
       <div style="font-size:16px;font-weight:700;color:#E0F0FF;letter-spacing:2px">ALPHACLAW <span class="green">v3</span></div>
-      <div style="font-size:8px;color:#2a4060;letter-spacing:1px">CRYPTO INTELLIGENCE · DADOS AO VIVO · BYBIT</div>
+      <div style="font-size:8px;color:#2a4060;letter-spacing:1px">INTELIGÊNCIA CRIPTO · DADOS AO VIVO · BYBIT</div>
     </div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -70,9 +70,9 @@ button:hover{opacity:.8}
     <div id="stn" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FFB80008;border:1px solid #FFB80025"><div class="dot" style="background:#FFB800"></div><span style="font-size:8px;color:#FFB800">NOTÍCIAS...</span></div>
     <div id="stb" style="display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:#FF445508;border:1px solid #FF445525;cursor:pointer" onclick="togD()"><div class="dot" style="background:#FF4455"></div><span style="font-size:8px;color:#FF4455">BOT OFFLINE</span></div>
     <div id="rgb" style="text-align:center;padding:4px 10px;border-radius:5px;background:#8899AA15;border:1px solid #8899AA33"><div class="lbl">REGIME</div><div id="rgv" style="font-size:10px;font-weight:700;color:#8899AA">NEUTRAL</div></div>
-    <div style="text-align:center"><div class="lbl">FEAR&GREED</div><div id="fgv" style="font-size:13px;font-weight:700;color:#FFB800">50</div></div>
+    <div style="text-align:center"><div class="lbl">MEDO E GANÂNCIA</div><div id="fgv" style="font-size:13px;font-weight:700;color:#FFB800">50</div></div>
     
-    <div style="text-align:center"><div class="lbl">PAPER</div><div id="blv" style="font-size:12px;font-weight:700;color:#00FF88">$10,000</div></div>
+    <div style="text-align:center"><div class="lbl">SALDO PAPER</div><div id="blv" style="font-size:12px;font-weight:700;color:#00FF88">$10,000</div></div>
     
     <div id="live-pnl-box" style="text-align:center;padding:4px 12px;border-radius:5px;background:#FFB80015;border:1px solid #FFB800;box-shadow: 0 0 10px #FFB80040;transition:all 0.3s">
       <div class="lbl" id="live-pnl-lbl" style="color:#FFB800;font-weight:700;letter-spacing:1px">LUCRO AO VIVO</div>
@@ -100,12 +100,12 @@ button:hover{opacity:.8}
 <div id="tkw"><div id="tki"><span style="color:#2a4060"><span class="sp">⟳</span> Carregando preços ao vivo...</span></div></div>
 
 <div id="tabs">
-  <button class="act" onclick="ST('dash')">Dashboard</button>
+  <button class="act" onclick="ST('dash')">Painel</button>
   <button onclick="ST('preco')">Preços</button>
   <button onclick="ST('sinal')">⚡ Sinais <span id="bsg" style="display:none;font-size:7px;background:#00FF8820;color:#00FF88;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
   <button onclick="ST('posic')">Posições <span id="bpg" style="display:none;font-size:7px;background:#00AAFF20;color:#00AAFF;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
   <button onclick="ST('notic')">Notícias <span id="bbg" style="display:none;font-size:7px;background:#FF445520;color:#FF4455;padding:1px 4px;border-radius:2px;margin-left:3px"></span></button>
-  <button onclick="ST('trade')">Trades & P&L</button>
+  <button onclick="ST('trade')">Histórico & P&L</button>
   <button onclick="ST('logs')">Logs do Bot</button>
   <button onclick="ST('sobre')">Sobre</button>
 </div>
@@ -127,7 +127,7 @@ button:hover{opacity:.8}
       <div style="padding:8px 12px;border-bottom:1px solid #071422;background:#010913;position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:9px;color:#2a4060;letter-spacing:1px">📰 NOTÍCIAS</span>
         <div style="display:flex;gap:3px">
-          <button onclick="SNF('ALL')" data-f="ALL" class="nfb" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:7px;padding:2px 4px;border-radius:3px">ALL</button>
+          <button onclick="SNF('ALL')" data-f="ALL" class="nfb" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:7px;padding:2px 4px;border-radius:3px">TUDO</button>
           <button onclick="SNF('BTC')" data-f="BTC" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">BTC</button>
           <button onclick="SNF('ETH')" data-f="ETH" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">ETH</button>
           <button onclick="SNF('SOL')" data-f="SOL" class="nfb" style="background:none;border:1px solid #071422;color:#2a4060;font-size:7px;padding:2px 4px;border-radius:3px">SOL</button>
@@ -142,7 +142,7 @@ button:hover{opacity:.8}
 <div id="tab-preco" class="tc">
   <div class="card" style="overflow:hidden">
     <div class="tr th" style="grid-template-columns:30px 100px 110px 70px 75px 75px 90px 90px 75px;gap:8px">
-      <span>#</span><span>Ativo</span><span>Preço</span><span>1h</span><span>24h</span><span>7d</span><span>Vol 24h</span><span>MCap</span><span>ATH %</span>
+      <span>#</span><span>Ativo</span><span>Preço</span><span>1h</span><span>24h</span><span>7d</span><span>Vol 24h</span><span>Cap. Mercado</span><span>ATH %</span>
     </div>
     <div id="ptbl"></div>
   </div>
@@ -171,7 +171,7 @@ button:hover{opacity:.8}
     <div style="padding:8px 14px;border-bottom:1px solid #071422;display:flex;justify-content:space-between;align-items:center">
       <span id="nlbl" style="font-size:9px;color:#2a4060">CARREGANDO...</span>
       <div style="display:flex;gap:4px">
-        <button onclick="SNF2('ALL')" class="nf2" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:8px;padding:2px 6px;border-radius:3px">ALL</button>
+        <button onclick="SNF2('ALL')" class="nf2" style="background:#00FF8818;border:1px solid #00FF8844;color:#00FF88;font-size:8px;padding:2px 6px;border-radius:3px">TUDO</button>
         <button onclick="SNF2('BTC')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">BTC</button>
         <button onclick="SNF2('ETH')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">ETH</button>
         <button onclick="SNF2('XRP')" class="nf2" style="background:none;border:1px solid #071422;color:#2a4060;font-size:8px;padding:2px 6px;border-radius:3px">XRP</button>
@@ -201,30 +201,32 @@ button:hover{opacity:.8}
   <div style="max-width:800px; margin:0 auto; background:#030e1a; border:1px solid #071422; border-radius:8px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.5)">
     <h1 style="font-size:24px; color:#00FF88; margin-bottom:8px; margin-top:0; letter-spacing:1px">AlphaClaw Quant v3.0</h1>
     <p style="color:#8899AA; font-size:14px; line-height:1.7; margin-bottom:32px">
-      O AlphaClaw não é um simples robô de retalho. É um <b>Hedge Fund Algorítmico Híbrido</b> desenhado para mesas proprietárias (Prop Desks). 
-      Ele combina estratégias matemáticas institucionais com a validação orgânica de Inteligência Artificial (Modelos LLM OSS de 120B de parâmetros), 
-      garantindo que nunca opera contra o contexto macroeconómico do mercado.
+      O AlphaClaw Quant é um ecossistema de negociação algorítmica de nível institucional, concebido para operar com a precisão e a gestão de risco de um fundo de investimento profissional. Ele transcende a automação tradicional ao fundir análises matemáticas complexas com uma poderosa Inteligência Artificial de raciocínio profundo. O sistema não apenas identifica padrões gráficos, mas compreende o contexto macroeconômico, garantindo que o capital seja exposto apenas nos cenários de mais alta probabilidade e segurança.
     </p>
 
     <h2 style="font-size:13px; color:#E0F0FF; border-bottom:1px solid #071422; padding-bottom:8px; margin-bottom:16px; letter-spacing:2px">⚙️ CAPACIDADES PRINCIPAIS (O MOTOR)</h2>
     <ul style="color:#B8CCD8; font-size:13px; line-height:2.0; margin-bottom:40px; padding-left:20px">
-      <li><strong style="color:#00AAFF">Matriz Multi-Timeframe (MTF):</strong> Lê o mercado desde os 15 minutos até ao Diário antes de agir.</li>
-      <li><strong style="color:#FF4455">Regime Switcher (ADX):</strong> Se a tendência é forte, desliga as estratégias de reversão para não ser esmagado; se for lateral, desliga os rompimentos.</li>
-      <li><strong style="color:#00FF88">Execução Zero-Fee (Maker/Limit):</strong> Injeta liquidez no Livro de Ofertas com a flag Post-Only, anulando as taxas.</li>
-      <li><strong style="color:#FFB800">Trailing Stop Institucional:</strong> Bloqueia matematicamente 50% do lucro flutuante assim que o alvo inicial é atingido.</li>
-      <li><strong style="color:#9945FF">Gestor de Confluência:</strong> Só atira se várias estratégias matemáticas concordarem em simultâneo.</li>
+      <li><strong style="color:#00AAFF">Matriz de Múltiplos Períodos (MTF):</strong> Analisa o mercado em diversas janelas de tempo simultaneamente (desde os 15 minutos até o gráfico diário) para encontrar entradas cirúrgicas alinhadas com a tendência principal.</li>
+      <li><strong style="color:#FF4455">Detector de Regime de Mercado (ADX):</strong> Adapta-se dinamicamente ao comportamento do mercado. Desativa estratégias de reversão durante tendências fortes e bloqueia rompimentos falsos em mercados laterais.</li>
+      <li><strong style="color:#00FF88">Execução Otimizada (Zero-Fee):</strong> Utiliza ordens passivas (Post-Only) para fornecer liquidez ao livro de ofertas, eliminando os custos das taxas de execução da corretora e maximizando o lucro líquido.</li>
+      <li><strong style="color:#FFB800">Proteção Dinâmica (Trailing Stop):</strong> Um gestor de risco implacável. Assim que uma operação atinge uma margem de lucro segura, o sistema move a proteção automaticamente, garantindo lucros e eliminando o risco de perda.</li>
+      <li><strong style="color:#9945FF">Motor de Confluência:</strong> O algoritmo atua como um comitê de decisões. Uma operação só é ativada se múltiplas estratégias técnicas concordarem no mesmo exato milissegundo.</li>
     </ul>
 
     <h2 style="font-size:13px; color:#E0F0FF; border-bottom:1px solid #071422; padding-bottom:8px; margin-bottom:16px; letter-spacing:2px">🚀 ÚLTIMAS ATUALIZAÇÕES</h2>
     <div style="display:flex; flex-direction:column; gap:14px">
       <div style="background:#0a1525; padding:16px; border-radius:6px; border-left:4px solid #00FF88">
-        <div style="font-size:12px; color:#00FF88; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v3.0 — AGENTE I.A VALIDATOR (RAG)</div>
-        <div style="font-size:12px; color:#8899AA; line-height:1.6">Integração com OpenRouter (Modelos OSS 70B/120B). A IA analisa o Fear & Greed e notícias globais. Se o cenário for de "Risco Sistémico", ela veta a entrada do bot.</div>
+        <div style="font-size:12px; color:#00FF88; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v3.0 — Agente Validador de Inteligência Artificial</div>
+        <div style="font-size:12px; color:#8899AA; line-height:1.6">Integração de ponta com IA Generativa. Antes de enviar qualquer ordem, o Cérebro de IA analisa o Sentimento Global (Índice de Medo e Ganância) e o impacto das últimas notícias em tempo real. Se o cenário apresentar risco sistêmico, a IA atua como um "Gestor Sênior" e possui autoridade para vetar a operação, protegendo a sua banca de quedas repentinas.</div>
       </div>
       <div style="background:#0a1525; padding:16px; border-radius:6px; border-left:4px solid #00AAFF">
-        <div style="font-size:12px; color:#00AAFF; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v2.8 — LIQUIDATION SQUEEZE DETECTOR</div>
-        <div style="font-size:12px; color:#8899AA; line-height:1.6">Nova classe que monitoriza picos anormais de volume para operar contra o desespero de posições liquidadas.</div>
+        <div style="font-size:12px; color:#00AAFF; margin-bottom:6px; font-weight:bold; letter-spacing:1px">v2.8 — Rastreador de Liquidações (Squeeze Detector)</div>
+        <div style="font-size:12px; color:#8899AA; line-height:1.6">Módulo especializado em monitorar picos anormais de volume. A estratégia lucra em momentos de pânico, entrando a favor da tendência quando traders superalavancados são liquidados pelas corretoras.</div>
       </div>
+    </div>
+    
+    <div style="margin-top:40px; text-align:center; font-size:10px; color:#3a5070; border-top:1px solid #071422; padding-top:20px; letter-spacing:1px">
+      DESENVOLVIDO PARA ALTA PERFORMANCE | AUTOMAÇÃO TOTAL VIA GITHUB & RAILWAY
     </div>
   </div>
 </div>
@@ -404,7 +406,7 @@ function RMC(){
           <span>Máx: <span class="green">${fP(p.hi)}</span></span>
           <span>Mín: <span class="red">${fP(p.lo)}</span></span>
           <span>Vol: <span class="gray">${fB(p.vol)}</span></span>
-          <span>MCap: <span class="gray">${fB(p.mc)}</span></span>
+          <span>Cap. Mercado: <span class="gray">${fB(p.mc)}</span></span>
         </div>
         <div style="margin-top:4px;font-size:10px;color:#2a4060">ATH: <span class="gray">${fP(p.ath)}</span> <span class="red">${(p.athC||0).toFixed(1)}%</span></div>
       </div>
@@ -460,9 +462,9 @@ function RBC(){
 function RMG(){
   const p=P[SC]||{},v=fg.value,fc=v<25?"#FF4455":v<45?"#FF8800":v>75?"#FF4455":v>55?"#00FF88":"#FFB800";
   document.getElementById("mg").innerHTML=[
-    ["Fear & Greed",`<span style="color:${fc}">${fg.value}</span> <span style="font-size:9px;color:#4a6060">${fg.classification}</span>`],
+    ["Medo e Ganância",`<span style="color:${fc}">${fg.value}</span> <span style="font-size:9px;color:#4a6060">${fg.classification}</span>`],
     ["Vol 24h "+SC,`<span class="gray">${fB(p.vol)}</span>`],
-    ["MCap "+SC,`<span class="gray">${fB(p.mc)}</span>`],
+    ["Cap. Mercado "+SC,`<span class="gray">${fB(p.mc)}</span>`],
   ].map(([k,v])=>`<div class="cdark"><div class="lbl">${k}</div><div style="font-size:11px">${v}</div></div>`).join("");
 }
 
@@ -473,7 +475,7 @@ function RNS(){
   if(!AN.length){e.innerHTML=`<div style="padding:20px;text-align:center;color:#2a4060"><span class="sp">⟳</span></div>`;return;}
   e.innerHTML=f.slice(0,25).map(n=>`
     <div class="ni${n.brk?" nb":""}" onclick="window.open('${n.url}','_blank')">
-      ${n.brk?`<div style="font-size:8px;color:#FF4455;font-weight:700;margin-bottom:2px;letter-spacing:1px">⚡ BREAKING</div>`:""}
+      ${n.brk?`<div style="font-size:8px;color:#FF4455;font-weight:700;margin-bottom:2px;letter-spacing:1px">⚡ URGENTE</div>`:""}
       <div style="font-size:10px;color:${n.brk?"#FFAAAA":"#9aaabb"};line-height:1.4">${n.title}</div>
       <div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;align-items:center">
         <span style="font-size:8px;color:#2a3a50">${n.source}</span>
@@ -550,14 +552,14 @@ function RPS(){
 function RFN(){
   const v=fg.value,fc=v<40?"#FF4455":v>60?"#00FF88":"#FFB800";
   document.getElementById("nstats").innerHTML=[
-    [`F&G: ${fg.value}`,fg.classification,fc],["Breaking",AN.filter(n=>n.brk).length+" alertas","#FF4455"],
-    ["Bullish",AN.filter(n=>n.imp>=4).length+" notícias","#00FF88"],["Bearish",AN.filter(n=>n.imp<=-4).length+" notícias","#FF4455"],
+    [`F&G: ${fg.value}`,fg.classification,fc],["URGENTES",AN.filter(n=>n.brk).length+" alertas","#FF4455"],
+    ["Otimistas",AN.filter(n=>n.imp>=4).length+" notícias","#00FF88"],["Pessimistas",AN.filter(n=>n.imp<=-4).length+" notícias","#FF4455"],
   ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:14px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
   const f=NF2==="ALL"?AN:AN.filter(n=>n.coin===NF2||n.coin==="ALL");
   document.getElementById("nlbl").textContent=(AN.length||0)+" NOTÍCIAS AO VIVO — CryptoCompare";
   document.getElementById("nfl").innerHTML=f.map(n=>`
     <div class="ni${n.brk?" nb":""}" onclick="window.open('${n.url}','_blank')">
-      ${n.brk?`<span style="font-size:8px;color:#FF4455;font-weight:700;letter-spacing:1px">⚡ BREAKING </span>`:""}
+      ${n.brk?`<span style="font-size:8px;color:#FF4455;font-weight:700;letter-spacing:1px">⚡ URGENTE </span>`:""}
       <div style="font-size:11px;color:${n.brk?"#FFAAAA":"#C0D0E0"};line-height:1.4;margin-bottom:5px">${n.title}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <span style="font-size:9px;color:#3a5070">${n.source}</span>
@@ -574,10 +576,10 @@ function RFN(){
 function RTR(){
   const st=BT.stats||{};
   document.getElementById("tstats").innerHTML=[
-    ["P&L Total","$"+(st.total_pnl||0).toFixed(2),(st.total_pnl||0)>=0?"#00FF88":"#FF4455"],
-    ["Win Rate",(st.win_rate||0).toFixed(1)+"%","#00AAFF"],
-    ["Wins / Losses",(st.wins||0)+" / "+(st.losses||0),"#FFB800"],
-    ["Avg Win","$"+(st.avg_win||0).toFixed(2),"#00FF88"],
+    ["Lucro Total","$"+(st.total_pnl||0).toFixed(2),(st.total_pnl||0)>=0?"#00FF88":"#FF4455"],
+    ["Taxa de Acerto",(st.win_rate||0).toFixed(1)+"%","#00AAFF"],
+    ["Vitórias / Derrotas",(st.wins||0)+" / "+(st.losses||0),"#FFB800"],
+    ["Média de Lucro","$"+(st.avg_win||0).toFixed(2),"#00FF88"],
   ].map(([k,v,c])=>`<div class="card"><div class="lbl">${k}</div><div style="font-size:16px;font-weight:700;color:${c};font-family:monospace">${v}</div></div>`).join("");
   const tr=BT.trades||[],e=document.getElementById("tcnt");
   if(!tr.length){e.innerHTML=`<div style="text-align:center;padding:50px;color:#2a4060;font-size:11px">${BON?"Nenhum trade fechado ainda.":"Bot offline."}</div>`;return;}
